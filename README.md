@@ -269,7 +269,7 @@ Ch  SSID                             BSSID               Auth    Cipher  RSSI   
 [MRS Scan Event Callback]: Scan Done!
 cmd id 0xd8 -- 0x0 seq 0x3b
 ```
-Performs a WIFI scan. Interesting that this can be done from the device. Perhaps it was inteneded that the App wasnt the only way to configure the device, maybe some page on the built in webserver?
+Performs a WIFI scan. Interesting that this can be done from the device. This tells the app what AP's are available near by to that it could connect to. This makes sense as the location of the device may not be the same as the App.
 
 
 ```
