@@ -1,6 +1,13 @@
 # Meross
 Investigating the Meross MSS310 Smart Plug
 
+## Teardown
+![alt text](https://raw.githubusercontent.com/bytespider/Meross/master/IMG_6869.JPG)
+![alt text](https://raw.githubusercontent.com/bytespider/Meross/master/IMG_6870.JPG)
+![alt text](https://raw.githubusercontent.com/bytespider/Meross/master/IMG_6871.JPG)
+![alt text](https://raw.githubusercontent.com/bytespider/Meross/master/IMG_6872.JPG)
+![alt text](https://raw.githubusercontent.com/bytespider/Meross/master/IMG_6873.JPG)
+
 ## UART / Serial interface
 The board has a serial connection @ baud 115200.
 It appears to be running a custom shell on top of a unix like OS. Other than the provided commands, there looks to be no way to get further info about the OS.
