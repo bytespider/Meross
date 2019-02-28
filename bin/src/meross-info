@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const program = require('commander')
+const netroute = require('netroute')
+
+const API = require('./api')
+
+const collection = (value, store = []) => {
+    store.push(value)
+    return store
+}
+
+const unique = (array) => [...new Set(array)]
+
+program
+  .version('0.1.0')
+  .arguments('<interface> [options]')
+
+program.parse(process.argv);
+
+
+if (!program.args.length) {
+    console.error('interface must be specified');
+    process.exit(1);
+}
+
+(async () => {
+    const iface = program.args[0]
+    const gateway = netroute.getGateway(iface)
+
+    console.log(`Getting info about device with IP ${gateway} on ${iface}`)
+
+
+    const api = new API(gateway)
+    var response = api.deviceInformation()
+    response.then((response) => console.log(response))
+})()
