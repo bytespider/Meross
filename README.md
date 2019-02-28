@@ -1,5 +1,7 @@
 # Meross
-Investigating the Meross MSS310 Smart Plug
+Investigating the Meross MSS310 Smart Plug for puspose of utilising our <a href="https://github.com/bytespider/Meross/wiki/MQTT">own MQTT servers</a>.
+
+
 
 ## Teardown
 ![alt text](https://raw.githubusercontent.com/bytespider/Meross/master/IMG_6869.JPG)
