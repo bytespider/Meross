@@ -1,8 +1,8 @@
 # Meross utiities
 `npm install` to install dependencies
 
-#Info
+# Info
 `meross info --gateway <ip>` gets information from the device you are conencted to in setup mode
 
-#Setup
+# Setup
 `meross setup --gateway <ip> [options]` setup device you are conencted to in setup mode
