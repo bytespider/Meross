@@ -3,7 +3,6 @@
 'use strict'
 
 const program = require('commander')
-const netroute = require('netroute')
 
 const API = require('./api')
 
@@ -15,22 +14,21 @@ const collection = (value, store = []) => {
 const unique = (array) => [...new Set(array)]
 
 program
-  .version('0.1.0')
-  .arguments('<interface> [options]')
+  .version('0.2.0')
+  .arguments('<options>')
+  .option('-g, --gateway <gateway>', 'Set the gateway address')
 
 program.parse(process.argv);
 
 
-if (!program.args.length) {
-    console.error('interface must be specified');
+if (!program.gateway) {
+    console.error('Gateway must be specified');
     process.exit(1);
 }
 
 (async () => {
-    const iface = program.args[0]
-    const gateway = netroute.getGateway(iface)
-
-    console.log(`Getting info about device with IP ${gateway} on ${iface}`)
+    const gateway = program.gateway
+    console.log(`Getting info about device with IP ${gateway}`)
 
 
     const api = new API(gateway)
