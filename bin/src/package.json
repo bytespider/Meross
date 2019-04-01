@@ -1,6 +1,6 @@
 {
   "name": "meross",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^2.19.0",
-    "netroute": "^1.0.2",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   }

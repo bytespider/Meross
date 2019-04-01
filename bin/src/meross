@@ -4,72 +4,10 @@
 
 var program = require('commander');
 program
-  .version('0.1.0');
+  .version('0.2.0');
 
 program
-    .command('info <interface> [options]', 'get information about compatable Meross smart device')
-  .command('setup <interface> [options]', 'setup compatable Meross smart device')
+  .command('info [options]', 'get information about compatable Meross smart device')
+  .command('setup [options]', 'setup compatable Meross smart device')
 
 program.parse(process.argv);
-
-// request.post({
-//     url: `http://${gateway}/config`,
-//     json: {
-//         "header":   {
-//             "from": "",
-//             "messageId": "",
-//             "method": "SET",
-//             "namespace": "Appliance.Config.Key",
-//             "payloadVersion": 1,
-//             "sign": "",
-//             "timestamp": 0
-//         },
-//         "payload": {
-//             "key": {
-//                 "gateway": {
-//                     "host": "192.168.0.17",
-//                     "port": 1883,
-//                     "secondHost": "192.168.0.17",
-//                     "secondPort": 1883,
-//                 },
-//                 "key": "1234567890",
-//                 "userId": "rob@bytespider.eu"
-//             }
-//         }
-//     },
-//     headers: {
-//         'Content-Type': 'application/json'
-//     }
-// }, (error, response, body) => {
-//     console.log(util.inspect(body, {showHidden: false, depth: 6}))
-// })
-
-// request.post({
-//     url: `http://${gateway}/config`,
-//     json: {
-//         "header":   {
-//             "from": "",
-//             "messageId": "",
-//             "method": "SET",
-//             "namespace": "Appliance.Config.Wifi",
-//             "payloadVersion": 0,
-//             "sign": "",
-//             "timestamp": 0
-//         },
-//         "payload": {
-//             "wifi": {
-//                 "bssid": "48:d3:43:93:9d::e1",
-//                 "channel": 1,
-//                 "cipher": 3,
-//                 "encryption": 6,
-//                 "password": Buffer.from("qt5fdFgxQhh3").toString('base64'),
-//                 "ssid": Buffer.from("VM7877756").toString('base64')
-//             }
-//         }
-//     },
-//     headers: {
-//         'Content-Type': 'application/json'
-//     }
-// }, (error, response, body) => {
-//     console.log(util.inspect(body, {showHidden: false, depth: 6}))
-// })
