@@ -1,5 +1,13 @@
 'use strict'
 
+if (typeof(URL) === 'undefined') {
+    var URL = class URL {
+        constructor(url) {
+            return require('url').parse(url)
+        }
+    }
+}
+
 const request = require('request-promise-native')
 
 const cleanServerUrl = (server) => {
