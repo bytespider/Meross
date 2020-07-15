@@ -29,21 +29,28 @@ module.exports = class API {
         this.key = key
     }
 
-    deviceInformation() {
+    signPacket(payload) {
         let messageId = md5(uuid4())
         let timestamp = Math.floor(Date.now() / 1000)
         let signature = md5(messageId + this.key + timestamp)
 
+        payload.header.messageId = messageId
+        payload.header.timestamp = timestamp
+        payload.header.sign = signature
+
+        return payload
+    }
+
+    deviceInformation() {
         let payload = {
             'header':   {
                 'method': 'GET',
-                'namespace': 'Appliance.System.All',
-                'messageId': messageId,
-                'timestamp': timestamp,
-                'sign': signature
+                'namespace': 'Appliance.System.All'
             },
             'payload': {}
         }
+
+        payload = this.signPacket(payload)
 
         console.log('sending payload', util.inspect(payload, {showHidden: false, depth: null}))
 
@@ -57,9 +64,6 @@ module.exports = class API {
     }
 
     configureMqttServers(mqtt) {
-        let messageId = md5(uuid4())
-        let timestamp = Math.floor(Date.now() / 1000)
-        let signature = md5(messageId + this.key + timestamp)
         let servers = mqtt/*.filter((server) => serverRegex.test(server))*/
         servers = mqtt.map((server) => {
             server = cleanServerUrl(server)
@@ -76,10 +80,7 @@ module.exports = class API {
         let payload = {
             'header':   {
                 'method': 'SET',
-                'namespace': 'Appliance.Config.Key',
-                'messageId': messageId,
-                'timestamp': timestamp,
-                'sign': signature
+                'namespace': 'Appliance.Config.Key'
             },
             'payload': {
                 'key': {
@@ -99,6 +100,8 @@ module.exports = class API {
             }
         }
 
+        payload = this.signPacket(payload)
+
         console.log('sending payload', util.inspect(payload, {showHidden: false, depth: null}))
 
         return request.post({
@@ -111,16 +114,10 @@ module.exports = class API {
     }
 
     configureWifiCredentials(credentials) {
-        let messageId = md5(uuid4())
-        let timestamp = Math.floor(Date.now() / 1000)
-        let signature = md5(messageId + this.key + timestamp)
         let payload = {
             'header':   {
                 'method': 'SET',
-                'namespace': 'Appliance.Config.Wifi',
-                'messageId': messageId,
-                'timestamp': timestamp,
-                'sign': signature
+                'namespace': 'Appliance.Config.Wifi'
             },
             'payload': {
                 'wifi': {
@@ -129,6 +126,8 @@ module.exports = class API {
                 }
             }
         }
+
+        payload = this.signPacket(payload)
 
         console.log('sending payload', util.inspect(payload, {showHidden: false, depth: null}))
 
