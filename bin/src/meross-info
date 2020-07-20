@@ -18,7 +18,7 @@ program
   .version('0.2.0')
   .arguments('<options>')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
-  .option('--key <shared-key>', 'Shared key for generating signatures', '')
+  .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
 
 program.parse(process.argv);
 
