@@ -9,6 +9,9 @@ if (typeof(URL) === 'undefined') {
 }
 
 const request = require('request-promise-native')
+const util = require('util')
+const uuid4 = require('uuid4');
+const md5 = require('md5');
 
 const cleanServerUrl = (server) => {
     server = /mqtts?:\/\//.test(server) ? server : 'mqtt://' + server // add protocol
@@ -20,27 +23,36 @@ const cleanServerUrl = (server) => {
 const serverRegex = /((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])):(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])$/
 
 
-let messageId = 0;
 module.exports = class API {
-    constructor(host) {
+    constructor(host, key) {
         this.host = host
+        this.key = key
     }
 
-    get messageId() {
-        return messageId + 1
+    signPacket(payload) {
+        let messageId = md5(uuid4())
+        let timestamp = Math.floor(Date.now() / 1000)
+        let signature = md5(messageId + this.key + timestamp)
+
+        payload.header.messageId = messageId
+        payload.header.timestamp = timestamp
+        payload.header.sign = signature
+
+        return payload
     }
 
     deviceInformation() {
         let payload = {
             'header':   {
                 'method': 'GET',
-                'namespace': 'Appliance.System.All',
-                'messageId': this.messageId + ''
+                'namespace': 'Appliance.System.All'
             },
             'payload': {}
         }
 
-        console.log('sending payload', payload)
+        payload = this.signPacket(payload)
+
+        console.log('sending payload', util.inspect(payload, {showHidden: false, depth: null}))
 
         return request.post({
             url: `http://${this.host}/config`,
@@ -68,8 +80,7 @@ module.exports = class API {
         let payload = {
             'header':   {
                 'method': 'SET',
-                'namespace': 'Appliance.Config.Key',
-                'messageId': this.messageId + ''
+                'namespace': 'Appliance.Config.Key'
             },
             'payload': {
                 'key': {
@@ -83,13 +94,15 @@ module.exports = class API {
 
                         return gateway
                     })(servers.slice(0, 2)),
-                    'key': '',
+                    'key': this.key,
                     'userId': ''
                 }
             }
         }
 
-        console.log('sending payload', payload)
+        payload = this.signPacket(payload)
+
+        console.log('sending payload', util.inspect(payload, {showHidden: false, depth: null}))
 
         return request.post({
             url: `http://${this.host}/config`,
@@ -104,8 +117,7 @@ module.exports = class API {
         let payload = {
             'header':   {
                 'method': 'SET',
-                'namespace': 'Appliance.Config.Wifi',
-                'messageId': this.messageId + ''
+                'namespace': 'Appliance.Config.Wifi'
             },
             'payload': {
                 'wifi': {
@@ -115,7 +127,9 @@ module.exports = class API {
             }
         }
 
-        console.log('sending payload', payload)
+        payload = this.signPacket(payload)
+
+        console.log('sending payload', util.inspect(payload, {showHidden: false, depth: null}))
 
         return request.post({
             url: `http://${this.host}/config`,
