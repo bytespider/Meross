@@ -3,6 +3,7 @@
 'use strict'
 
 const program = require('commander')
+const util = require('util')
 
 const API = require('./api')
 
@@ -17,6 +18,7 @@ program
   .version('0.2.0')
   .arguments('<options>')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
+  .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
 
 program.parse(process.argv);
 
@@ -28,10 +30,11 @@ if (!program.gateway) {
 
 (async () => {
     const gateway = program.gateway
+    const key = program.key
     console.log(`Getting info about device with IP ${gateway}`)
 
 
-    const api = new API(gateway)
+    const api = new API(gateway, key)
     var response = api.deviceInformation()
-    response.then((response) => console.log(response))
+    response.then((response) => console.log('Got response:', util.inspect(response, {showHidden: false, depth: null})))
 })()
