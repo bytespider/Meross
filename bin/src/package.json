@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^2.19.0",
+    "md5": "^2.2.1",
     "request": "^2.88.0",
-    "request-promise-native": "^1.0.7"
+    "request-promise-native": "^1.0.7",
+    "uuid4": "^2.0.2"
   }
 }
