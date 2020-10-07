@@ -3,6 +3,7 @@
 'use strict'
 
 const program = require('commander')
+const util = require('util')
 
 const API = require('./api')
 
@@ -14,12 +15,13 @@ const collection = (value, store = []) => {
 const unique = (array) => [...new Set(array)]
 
 program
-  .version('0.2.0')
+  .version('1.0.3')
   .arguments('[options]')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
+  .option('--key <shared-key>', 'Shared key for generating signatures', '')
 
 program.parse(process.argv);
 
@@ -41,10 +43,11 @@ if (!program.wifiPass) {
 
 (async () => {
     const gateway = program.gateway
+    const key = program.key
     console.log(`Setting up device with IP ${gateway}`)
 
 
-    const api = new API(gateway)
+    const api = new API(gateway, key)
     var response;
 
     if (program.mqtt && program.mqtt.length) {
@@ -55,5 +58,5 @@ if (!program.wifiPass) {
         ssid: program.wifiSsid,
         password: program.wifiPass,
     })
-    console.log(response)
+    console.log('Got response:', util.inspect(response, {showHidden: false, depth: null}))
 })()
