@@ -15,7 +15,7 @@ const collection = (value, store = []) => {
 const unique = (array) => [...new Set(array)]
 
 program
-  .version('0.2.0')
+  .version('1.0.3')
   .arguments('[options]')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
