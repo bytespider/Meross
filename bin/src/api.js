@@ -24,9 +24,10 @@ const serverRegex = /((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0
 
 
 module.exports = class API {
-    constructor(host, key) {
+    constructor(host, key, userId) {
         this.host = host
         this.key = key
+        this.userId = userId
     }
 
     signPacket(payload) {
@@ -95,7 +96,7 @@ module.exports = class API {
                         return gateway
                     })(servers.slice(0, 2)),
                     'key': this.key,
-                    'userId': ''
+                    'userId': this.userId
                 }
             }
         }
