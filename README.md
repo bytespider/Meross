@@ -674,5 +674,7 @@ Device is in pairing mode
 #### Green
 Device is paired and relay is active
 
+#### Green flashing
+Device is trying to connect to the WIFI and/or MQTT broker. If it fails to then the device will reset and flash Green Orange alternating.
 
 
