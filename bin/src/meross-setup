@@ -12,8 +12,6 @@ const collection = (value, store = []) => {
     return store
 }
 
-const unique = (array) => [...new Set(array)]
-
 program
   .version('1.0.3')
   .arguments('[options]')
@@ -53,7 +51,7 @@ if (!program.wifiPass) {
     var response;
 
     if (program.mqtt && program.mqtt.length) {
-        response = await api.configureMqttServers(unique(program.mqtt))
+        response = await api.configureMqttServers(program.mqtt)
     }
 
     response = await api.configureWifiCredentials({
