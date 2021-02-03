@@ -75,6 +75,11 @@ module.exports = class API {
                 port: url.port
             }
         })
+        
+        // make sure we set a failover server
+        if (servers.length == 1) {
+            servers.push(servers[0]);
+        }
 
         console.log('Setting MQTT servers', servers)
 
