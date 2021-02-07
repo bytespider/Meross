@@ -12,8 +12,6 @@ const collection = (value, store = []) => {
     return store
 }
 
-const unique = (array) => [...new Set(array)]
-
 program
   .version('1.0.3')
   .arguments('[options]')
@@ -22,6 +20,7 @@ program
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
   .option('--key <shared-key>', 'Shared key for generating signatures', '')
+  .option('--user <user-id>', '', '')
 
 program.parse(process.argv);
 
@@ -44,14 +43,15 @@ if (!program.wifiPass) {
 (async () => {
     const gateway = program.gateway
     const key = program.key
+    const userId = program.user
     console.log(`Setting up device with IP ${gateway}`)
 
 
-    const api = new API(gateway, key)
+    const api = new API(gateway, key, userId)
     var response;
 
     if (program.mqtt && program.mqtt.length) {
-        response = await api.configureMqttServers(unique(program.mqtt))
+        response = await api.configureMqttServers(program.mqtt)
     }
 
     response = await api.configureWifiCredentials({
