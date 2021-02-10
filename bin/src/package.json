@@ -1,18 +1,19 @@
 {
   "name": "meross",
-  "version": "0.2.0",
-  "description": "",
+  "version": "1.0.4",
+  "description": "Utility to configure Meross devices for local MQTT",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Rob Griffiths <rob@bytespider.dev>",
+  "repository": "https://github.com/bytespider/Meross/tree/master/bin/src",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "commander": "^2.19.0",
     "md5": "^2.2.1",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.7",
+    "terminal-kit": "^1.47.0",
     "uuid4": "^2.0.2"
   }
 }
