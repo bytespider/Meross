@@ -1,6 +1,6 @@
 {
   "name": "meross",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Utility to configure Meross devices for local MQTT",
   "main": "index.js",
   "scripts": {
