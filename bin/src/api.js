@@ -24,6 +24,7 @@ const cleanServerUrl = (server) => {
 const serverRegex = /((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])|(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])):(?:6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])$/
 
 const base64Encode = str => Buffer.from(str).toString('base64')
+const base64Decode = str => Buffer.from(str, 'base64').toString('utf8')
 
 const tableOptions = {
     hasBorder: true,
@@ -32,6 +33,19 @@ const tableOptions = {
     fit: true,
     width: 95,
     firstColumnTextAttr: { color: 'yellow' }
+}
+
+const percentToColor = percent => percent > .7 ? '^G' : (percent > .5 ? '^Y' : (percent > .30 ? '^y' : '^r'))
+
+const bar = (percent, width) => {
+    const partials = ['▏', '▎', '▍', '▌', '▋', '▊', '▉']
+    let ticks = percent * width
+    if (ticks < 0) {
+        ticks = 0
+    }
+    let filled = Math.floor(ticks)
+    let open = bar.width - filled - 1
+    return (percentToColor(percent) + '▉').repeat(filled) + partials[Math.floor((ticks - filled) * partials.length)] + ' '.repeat(open)
 }
 
 function logRequest(request) {
@@ -53,6 +67,7 @@ function logRequest(request) {
     
     console.log('>')
     console.log(util.inspect(request.data, {showHidden: false, depth: null}))
+    console.log('')
 }
 
 function logResponse(response)  {
@@ -62,6 +77,7 @@ function logResponse(response)  {
     }
     console.log('<')
     console.log(util.inspect(response.data, {showHidden: false, depth: null}))
+    console.log('')
 }
 
 function handleRequestError(error, verbose)
@@ -84,6 +100,7 @@ module.exports = class API {
         this.host = host
         this.key = key
         this.userId = userId
+        this.verbose = verbose
         
         axios.interceptors.request.use(request => {
             if (verbose) {
@@ -198,7 +215,71 @@ module.exports = class API {
                 tableOptions
             )
         } catch (error) {
-            handleRequestError(error)
+            handleRequestError(error, this.verbose)
+        }
+    }
+    
+    async deviceWifiList() {
+        const packet = this.signPacket({
+            'header':   {
+                'method': 'GET',
+                'namespace': 'Appliance.Config.WifiList'
+            },
+            'payload': {}
+        })
+
+        try {
+            let spinner = await term.spinner({animation:'dotSpinner', rightPadding: ' '})
+            term('Getting WIFI list…\n')
+            
+            const response = await axios.post(
+                `http://${this.host}/config`,
+                packet,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }
+            )
+            
+            
+            spinner.animate(false)
+        
+            const data = response.data;
+            
+            if ('error' in data.payload) {
+                let {code, message} = data.payload.error;
+        
+                switch (code) {
+                    case 5001:
+                        console.error('Incorrect shared key provided.')
+                        break;
+                }
+                
+                return
+            }
+            
+            const wifiList = data.payload.wifiList
+            
+            let rows = [
+                ['SSID', 'Signal strength'],
+            ];
+            
+            for (const ap of wifiList) {
+                const decodedSsid = base64Decode(ap.ssid);
+                rows.push([decodedSsid ? decodedSsid : `<hidden ${ap.bssid}>`, bar((ap.signal / 100), 20)])
+            }
+            
+            let thisTableOptions = tableOptions
+            thisTableOptions.firstColumnTextAttr = { color: 'cyan' }
+            thisTableOptions.firstRowTextAttr = { color: 'yellow' }
+            
+            term.table(
+                rows,
+                tableOptions
+            )
+        } catch (error) {
+            handleRequestError(error, this.verbose)
         }
     }
 
@@ -260,7 +341,7 @@ module.exports = class API {
                 }
             )
         } catch (error) {
-            handleRequestError(error)
+            handleRequestError(error, this.verbose)
         }
     }
 
@@ -300,7 +381,7 @@ module.exports = class API {
                 }
             )
         } catch (error) {
-            handleRequestError(error)
+            handleRequestError(error, this.verbose)
         }
     }
     

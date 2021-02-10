@@ -20,6 +20,7 @@ program
   .arguments('<options>')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
   .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
+  .option('--include-wifi', 'Ask device for Nearby WIFI AP list')
   .option('-v, --verbose', 'Show debugging messages', '')
 
 program.parse(process.argv)
@@ -33,9 +34,14 @@ if (!program.gateway) {
 (async () => {
     const gateway = program.gateway
     const key = program.key
+    const includeWifiList = program.includeWifi
     const verbose = program.verbose
     const api = new API(gateway, key, null, verbose)
     
     console.log(`Getting info about device with IP ${gateway}`)
-    api.deviceInformation()
+    await api.deviceInformation()
+    
+    if (includeWifiList) {
+        await api.deviceWifiList()
+    }
 })()
