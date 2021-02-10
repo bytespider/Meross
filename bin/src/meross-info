@@ -2,6 +2,7 @@
 
 'use strict'
 
+const {version} = require('./package.json')
 const program = require('commander')
 const util = require('util')
 
@@ -15,26 +16,26 @@ const collection = (value, store = []) => {
 const unique = (array) => [...new Set(array)]
 
 program
-  .version('1.0.3')
+  .version(version)
   .arguments('<options>')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
   .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
+  .option('-v, --verbose', 'Show debugging messages', '')
 
-program.parse(process.argv);
+program.parse(process.argv)
 
 
 if (!program.gateway) {
-    console.error('Gateway must be specified');
-    process.exit(1);
+    console.error('Gateway must be specified')
+    process.exit(1)
 }
 
 (async () => {
     const gateway = program.gateway
     const key = program.key
+    const verbose = program.verbose
+    const api = new API(gateway, key, null, verbose)
+    
     console.log(`Getting info about device with IP ${gateway}`)
-
-
-    const api = new API(gateway, key)
-    var response = api.deviceInformation()
-    response.then((response) => console.log('Got response:', util.inspect(response, {showHidden: false, depth: null})))
+    api.deviceInformation()
 })()
