@@ -2,6 +2,7 @@
 
 'use strict'
 
+const {version} = require('./package.json')
 const program = require('commander')
 const util = require('util')
 
@@ -13,7 +14,7 @@ const collection = (value, store = []) => {
 }
 
 program
-  .version('1.0.3')
+  .version(version)
   .arguments('[options]')
   .option('-g, --gateway <gateway>', 'Set the gateway address')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
@@ -21,42 +22,42 @@ program
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
   .option('--key <shared-key>', 'Shared key for generating signatures', '')
   .option('--user <user-id>', '', '')
+  .option('-v, --verbose', 'Show debugging messages', '')
 
-program.parse(process.argv);
+program.parse(process.argv)
 
 
 if (!program.gateway) {
-    console.error('Gateway must be specified');
-    process.exit(1);
+    console.error('Gateway must be specified')
+    process.exit(1)
 }
 
 if (!program.wifiSsid) {
-    console.error('WIFI ssid must be specified');
-    process.exit(1);
+    console.error('WIFI ssid must be specified')
+    process.exit(1)
 }
 
 if (!program.wifiPass) {
-    console.error('WIFI password must be specified');
-    process.exit(1);
+    console.error('WIFI password must be specified')
+    process.exit(1)
 }
 
 (async () => {
     const gateway = program.gateway
     const key = program.key
     const userId = program.user
+    const verbose = program.verbose
+
+    const api = new API(gateway, key, userId, verbose)
+
     console.log(`Setting up device with IP ${gateway}`)
-
-
-    const api = new API(gateway, key, userId)
-    var response;
-
     if (program.mqtt && program.mqtt.length) {
-        response = await api.configureMqttServers(program.mqtt)
+        await api.configureMqttServers(program.mqtt)
     }
 
-    response = await api.configureWifiCredentials({
+    await api.configureWifiCredentials({
         ssid: program.wifiSsid,
         password: program.wifiPass,
     })
-    console.log('Got response:', util.inspect(response, {showHidden: false, depth: null}))
+    console.log(`Rebooting device`)
 })()
