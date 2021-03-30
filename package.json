@@ -1,13 +1,21 @@
 {
   "name": "meross",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Utility to configure Meross devices for local MQTT",
-  "main": "index.js",
+  "keywords": [
+    "smarthome",
+    "mqtt",
+    "meross",
+    "cli"
+  ],
+  "bin": {
+    "meross": "./bin/meross"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
-  "repository": "https://github.com/bytespider/Meross/tree/master/bin/src",
+  "repository": "https://github.com/bytespider/Meross/tree/master",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",

@@ -2,7 +2,7 @@
 
 'use strict'
 
-const {version} = require('./package.json')
+const {version} = require('../package.json')
 const program = require('commander')
 
 program
