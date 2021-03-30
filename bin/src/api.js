@@ -52,7 +52,7 @@ function logRequest(request) {
     let url = new URL(request.url);
     console.log(`> ${request.method.toUpperCase()} ${url.path}`)
     console.log(`> Host: ${url.host}`)
-    
+
     let headers = {}
     headers = Object.assign(headers, request.headers.common);
     headers = Object.assign(headers, request.headers[request.method]);
@@ -64,7 +64,7 @@ function logRequest(request) {
     for (let [header, value] of Object.entries(headers)) {
         console.log(`> ${header}: ${value}`)
     }
-    
+
     console.log('>')
     console.log(util.inspect(request.data, {showHidden: false, depth: null}))
     console.log('')
@@ -101,14 +101,14 @@ module.exports = class API {
         this.key = key
         this.userId = userId
         this.verbose = verbose
-        
+
         axios.interceptors.request.use(request => {
             if (verbose) {
                 logRequest(request)
             }
             return request
         })
-        
+
         axios.interceptors.response.use(response => {
             if (verbose) {
                 logResponse(response)
@@ -148,33 +148,33 @@ module.exports = class API {
                     },
                 }
             )
-        
+
             const data = response.data;
-            
+
             if ('error' in data.payload) {
                 let {code, message} = data.payload.error;
-        
+
                 switch (code) {
                     case 5001:
                         console.error('Incorrect shared key provided.')
                         break;
                 }
-                
+
                 return
             }
-            
+
             const system = data.payload.all.system
             const digest = data.payload.all.digest
             const hw = system.hardware
             const fw = system.firmware
-            
+
             let rows = [
                 ['Device', `${hw.type} ${hw.subType} ${hw.chipType} (hardware:${hw.version} firmware:${fw.version})`],
                 ['UUID', hw.uuid],
                 ['Mac address', hw.macAddress],
                 ['WIFI', `${fw.innerIp} (${fw.wifiMac})`],
             ];
-            
+
             if (fw.server) {
                 rows.push(
                     ['MQTT broker', `${fw.server}:${fw.port}`],
@@ -185,31 +185,11 @@ module.exports = class API {
                     ['Status', `^BConfiguration`]
                 )
             }
-            
+
             rows.push(
                 ['Credentials', `User: ^C${fw.userId}\nPassword: ^C${this.calculateDevicePassword(hw.macAddress, fw.userId)}`]
             )
-            
-            if (digest.togglex) {
-                let row = ['Switch state']
-                let col = []
-                for (let sw of digest.togglex) {
-                    let ch = [];
-                    if (digest.togglex.length > 1) {
-                        ch.push(`Channel ${sw.channel}:`);
-                    }
-                    ch.push(sw.onoff == 0 ? '^ROff' : '^GOn')
-                    
-                    const switchUpdateDate = new Date();
-                    switchUpdateDate.setTime(sw.lmTime * 1000) // put time into ms not seconds
-                    ch.push(`(${new Intl.DateTimeFormat(process.env.LC_TIME, { dateStyle: 'full', timeStyle: 'long' }).format(switchUpdateDate)})`)
-                    
-                    col.push(ch.join('^ '))
-                }
-                row.push(col.join("\n"));
-                rows.push(row)
-            }
-            
+
             term.table(
                 rows,
                 tableOptions
@@ -218,7 +198,7 @@ module.exports = class API {
             handleRequestError(error, this.verbose)
         }
     }
-    
+
     async deviceWifiList() {
         const packet = this.signPacket({
             'header':   {
@@ -231,7 +211,7 @@ module.exports = class API {
         try {
             let spinner = await term.spinner({animation:'dotSpinner', rightPadding: ' '})
             term('Getting WIFI list…\n')
-            
+
             const response = await axios.post(
                 `http://${this.host}/config`,
                 packet,
@@ -241,39 +221,39 @@ module.exports = class API {
                     },
                 }
             )
-            
-            
+
+
             spinner.animate(false)
-        
+
             const data = response.data;
-            
+
             if ('error' in data.payload) {
                 let {code, message} = data.payload.error;
-        
+
                 switch (code) {
                     case 5001:
                         console.error('Incorrect shared key provided.')
                         break;
                 }
-                
+
                 return
             }
-            
+
             const wifiList = data.payload.wifiList
-            
+
             let rows = [
                 ['SSID', 'Signal strength'],
             ];
-            
+
             for (const ap of wifiList) {
                 const decodedSsid = base64Decode(ap.ssid);
                 rows.push([decodedSsid ? decodedSsid : `<hidden ${ap.bssid}>`, bar((ap.signal / 100), 20)])
             }
-            
+
             let thisTableOptions = tableOptions
             thisTableOptions.firstColumnTextAttr = { color: 'cyan' }
             thisTableOptions.firstRowTextAttr = { color: 'yellow' }
-            
+
             term.table(
                 rows,
                 tableOptions
@@ -293,12 +273,12 @@ module.exports = class API {
                 port: url.port
             }
         })
-        
+
         // make sure we set a failover server
         if (servers.length == 1) {
             servers.push(servers[0]);
         }
-        
+
         term.table(
             [
                 ['Primary MQTT broker', `${servers[0].host}:${servers[0].port}`],
@@ -348,7 +328,7 @@ module.exports = class API {
     async configureWifiCredentials(credentials) {
         const ssid = base64Encode(credentials.ssid)
         const password = base64Encode(credentials.password)
-        
+
         const packet = this.signPacket({
             'header':   {
                 'method': 'SET',
@@ -361,7 +341,7 @@ module.exports = class API {
                 }
             }
         })
-        
+
         term.table(
             [
                 ['Encoded WIFI SSID', `${ssid}`],
@@ -384,7 +364,7 @@ module.exports = class API {
             handleRequestError(error, this.verbose)
         }
     }
-    
+
     calculateDevicePassword(macAddress, user = null) {
         return `${user}_${md5(macAddress + this.key)}`
     }
