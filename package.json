@@ -2,6 +2,12 @@
   "name": "meross",
   "version": "1.0.5",
   "description": "Utility to configure Meross devices for local MQTT",
+  "keywords": [
+    "smarthome",
+    "mqtt",
+    "meross",
+    "cli",
+  ],
   "bin": {
     "meross": "./bin/meross"
   },
