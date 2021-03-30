@@ -6,7 +6,7 @@
     "smarthome",
     "mqtt",
     "meross",
-    "cli",
+    "cli"
   ],
   "bin": {
     "meross": "./bin/meross"
