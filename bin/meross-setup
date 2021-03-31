@@ -16,7 +16,7 @@ const collection = (value, store = []) => {
 program
   .version(version)
   .arguments('[options]')
-  .option('-g, --gateway <gateway>', 'Set the gateway address')
+  .option('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
