@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "commander": "^2.19.0",
+    "commander": "^7.2",
     "md5": "^2.2.1",
     "terminal-kit": "^1.47.0",
     "uuid4": "^2.0.2"
