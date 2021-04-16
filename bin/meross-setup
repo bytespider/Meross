@@ -32,7 +32,7 @@ program
   .option('--wifi-channel <wifi-channel>', 'WIFI AP 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)', numberInRange(1, 13))
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
   .option('--key <shared-key>', 'Shared key for generating signatures', '')
-  .option('--user <user-id>', '', '')
+  .option('--user <user-id>', '', '0')
   .option('-v, --verbose', 'Show debugging messages', '')
   .parse(process.argv)
 
