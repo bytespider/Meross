@@ -1,1 +1,4 @@
 bin/src/node_modules
+cmd/
+dumps/
+old_certs/

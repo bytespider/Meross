@@ -13,51 +13,79 @@ const collection = (value, store = []) => {
     return store
 }
 
+const numberInRange = (min, max) => (value) => {
+    if (value < min || value > max) {
+        throw new program.InvalidOptionArgumentError(`Value is out of range (${min}-${max})`);
+    }
+    return parseInt(value);
+}
+
 program
   .version(version)
   .arguments('[options]')
-  .option('-g, --gateway <gateway>', 'Set the gateway address')
+  .option('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
+  .option('--wifi-encryption <wifi-encryption>', 'WIFI AP encryption(this can be found using meross info --include-wifi)', parseInt)
+  .option('--wifi-cipher <wifi-cipher>', 'WIFI AP cipher (this can be found using meross info --include-wifi)', parseInt)
+  .option('--wifi-bssid <wifi-bssid>', 'WIFI AP BSSID (each octet seperated by a colon `:`)')
+  .option('--wifi-channel <wifi-channel>', 'WIFI AP 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)', numberInRange(1, 13))
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
   .option('--key <shared-key>', 'Shared key for generating signatures', '')
-  .option('--user <user-id>', '', '')
+  .option('--user <user-id>', '', '0')
   .option('-v, --verbose', 'Show debugging messages', '')
+  .parse(process.argv)
 
-program.parse(process.argv)
-
-
-if (!program.gateway) {
+const options = program.opts();
+if (!options.gateway) {
     console.error('Gateway must be specified')
     process.exit(1)
 }
 
-if (!program.wifiSsid) {
+if (!options.wifiSsid) {
     console.error('WIFI ssid must be specified')
     process.exit(1)
 }
 
-if (!program.wifiPass) {
+if (!options.wifiPass) {
     console.error('WIFI password must be specified')
     process.exit(1)
 }
 
+if (undefined !== options.wifiChannel && isNaN(options.wifiChannel)) {
+    console.error('WIFI channel must be a number between 1-13')
+    process.exit(1)
+}
+
+if (undefined !== options.wifiEncryption && isNaN(options.wifiEncryption)) {
+    console.error('WIFI encryption must be a number')
+    process.exit(1)
+}
+
+if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
+    console.error('WIFI cipher must be a number')
+    process.exit(1)
+}
+
 (async () => {
-    const gateway = program.gateway
-    const key = program.key
-    const userId = program.user
-    const verbose = program.verbose
+    const gateway = options.gateway
+    const key = options.key
+    const userId = options.user
+    const verbose = options.verbose
 
     const api = new API(gateway, key, userId, verbose)
 
     console.log(`Setting up device with IP ${gateway}`)
-    if (program.mqtt && program.mqtt.length) {
-        await api.configureMqttServers(program.mqtt)
+    if (options.mqtt && options.mqtt.length) {
+        await api.configureMqttServers(options.mqtt)
     }
 
     await api.configureWifiCredentials({
-        ssid: program.wifiSsid,
-        password: program.wifiPass,
+        ssid: options.wifiSsid,
+        password: options.wifiPass,
+        channel: options.wifiChannel,
+        encryption: options.wifiEncryption,
+        cipher: options.wifiCipher,
     })
     console.log(`Rebooting device`)
 })()
