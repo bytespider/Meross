@@ -31,8 +31,8 @@ program
   .option('--wifi-bssid <wifi-bssid>', 'WIFI AP BSSID (each octet seperated by a colon `:`)')
   .option('--wifi-channel <wifi-channel>', 'WIFI AP 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)', numberInRange(1, 13))
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
-  .option('--key <shared-key>', 'Shared key for generating signatures', '')
-  .option('--user <user-id>', '', '0')
+  .option('-u, --user <user-id>', 'Integer id. Only useful for connecting to Meross Cloud.', parseInt)
+  .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
   .option('-v, --verbose', 'Show debugging messages', '')
   .parse(process.argv)
 
@@ -79,6 +79,8 @@ if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
     if (options.mqtt && options.mqtt.length) {
         await api.configureMqttServers(options.mqtt)
     }
+
+    await api.deviceInformation();
 
     await api.configureWifiCredentials({
         ssid: options.wifiSsid,
