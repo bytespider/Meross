@@ -19,6 +19,7 @@ program
   .version(version)
   .arguments('<options>')
   .option('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
+  .option('-u, --user <user-id>', 'Integer id. Only useful for connecting to Meross Cloud.', parseInt)
   .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
   .option('--include-wifi', 'Ask device for Nearby WIFI AP list')
   .option('-v, --verbose', 'Show debugging messages', '')
