@@ -20,18 +20,27 @@ const numberInRange = (min, max) => (value) => {
     return parseInt(value);
 }
 
+const parseIntWithValidation = (value) => {
+    const i  = parseInt(value);
+    if (isNaN(i)) {
+        throw new program.InvalidOptionArgumentError(`Value should be an integer`);
+    }
+
+    return i;
+}
+
 program
   .version(version)
   .arguments('[options]')
   .option('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
-  .option('--wifi-encryption <wifi-encryption>', 'WIFI AP encryption(this can be found using meross info --include-wifi)', parseInt)
-  .option('--wifi-cipher <wifi-cipher>', 'WIFI AP cipher (this can be found using meross info --include-wifi)', parseInt)
+  .option('--wifi-encryption <wifi-encryption>', 'WIFI AP encryption(this can be found using meross info --include-wifi)', parseIntWithValidation)
+  .option('--wifi-cipher <wifi-cipher>', 'WIFI AP cipher (this can be found using meross info --include-wifi)', parseIntWithValidation)
   .option('--wifi-bssid <wifi-bssid>', 'WIFI AP BSSID (each octet seperated by a colon `:`)')
   .option('--wifi-channel <wifi-channel>', 'WIFI AP 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)', numberInRange(1, 13))
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
-  .option('-u, --user <user-id>', 'Integer id. Only useful for connecting to Meross Cloud.', parseInt)
+  .option('-u, --user <user-id>', 'Integer id. Only useful for connecting to Meross Cloud.', parseIntWithValidation, 0)
   .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
   .option('-v, --verbose', 'Show debugging messages', '')
   .parse(process.argv)
@@ -88,6 +97,7 @@ if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
         channel: options.wifiChannel,
         encryption: options.wifiEncryption,
         cipher: options.wifiCipher,
+        bssid: options.wifiBssid,
     })
     console.log(`Rebooting device`)
 })()
