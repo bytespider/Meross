@@ -12,7 +12,7 @@
     "meross": "./bin/meross"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "exit 0"
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
   "repository": "https://github.com/bytespider/Meross/tree/master",
