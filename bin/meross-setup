@@ -99,5 +99,5 @@ if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
         cipher: options.wifiCipher,
         bssid: options.wifiBssid,
     })
-    console.log(`Rebooting device`)
+    console.log(`Device will reboot...`)
 })()
