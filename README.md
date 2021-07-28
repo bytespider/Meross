@@ -13,7 +13,7 @@ Once paired and linked to your broker, you can use the <a href="https://github.c
 
 ## Tools
 ### Info
-`npx meross info [--inclide-wifi]`
+`npx meross info [--include-wifi]`
 Gets information from the device you are connected to in setup mode and optionally the WIFI SSID's it can see.
 
 ### Setup
