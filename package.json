@@ -20,7 +20,9 @@
   "dependencies": {
     "axios": "^0.21.1",
     "commander": "^7.2",
+    "dst-transitions": "^1.1.0",
     "md5": "^2.2.1",
+    "ntp2": "^0.0.3",
     "terminal-kit": "^1.47.0",
     "uuid4": "^2.0.2"
   }
