@@ -1,15 +1,11 @@
 #!/usr/bin/env node
 
-'use strict'
-
-const {version} = require('../package.json')
-const program = require('commander')
+const program = require('yargs/yargs')(process.argv.slice(2));
 
 program
-  .version(version)
-
-program
-  .command('info [options]', 'get information about compatable Meross smart device')
-  .command('setup [options]', 'setup compatable Meross smart device')
-
-program.parse(process.argv)
+  .usage('Usage: $0 <command> [options]')
+  .command(require('./meross-info'))
+  .command(require('./meross-setup'))
+  .demandCommand()
+  .version()
+  .help().argv;
