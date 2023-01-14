@@ -21,7 +21,7 @@
     "axios": "^0.21.1",
     "commander": "^7.2",
     "md5": "^2.2.1",
-    "terminal-kit": "^1.47.0",
+    "terminal-kit": "^3.0.0",
     "uuid4": "^2.0.2"
   },
   "engines" : { 
