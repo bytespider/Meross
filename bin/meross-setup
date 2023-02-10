@@ -35,6 +35,7 @@ program
   .option('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
+  .option('--use-wifi-x', 'Use newer protocol on WifiX namespace with encrypted password')
   .option('--wifi-encryption <wifi-encryption>', 'WIFI AP encryption(this can be found using meross info --include-wifi)', parseIntWithValidation)
   .option('--wifi-cipher <wifi-cipher>', 'WIFI AP cipher (this can be found using meross info --include-wifi)', parseIntWithValidation)
   .option('--wifi-bssid <wifi-bssid>', 'WIFI AP BSSID (each octet seperated by a colon `:`)')
@@ -98,6 +99,6 @@ if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
         encryption: options.wifiEncryption,
         cipher: options.wifiCipher,
         bssid: options.wifiBssid,
-    })
+    }, options.useWifiX)
     console.log(`Device will reboot...`)
 })()
