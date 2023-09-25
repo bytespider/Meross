@@ -40,8 +40,8 @@ program
   .option('--wifi-bssid <wifi-bssid>', 'WIFI AP BSSID (each octet seperated by a colon `:`)')
   .option('--wifi-channel <wifi-channel>', 'WIFI AP 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)', numberInRange(1, 13))
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
-  .option('-u, --user <user-id>', 'Integer id. Only useful for connecting to Meross Cloud.', parseIntWithValidation, 0)
-  .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
+  .option('-u, --user <user-id>', 'User id. Can be retrieved from meross-info.', 0)
+  .option('-k, --key <shared-key>', 'Shared key. Can be retrieved from meross-info.', '')
   .option('-v, --verbose', 'Show debugging messages', '')
   .parse(process.argv)
 
