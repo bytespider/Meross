@@ -11,10 +11,15 @@
   "bin": {
     "meross": "./bin/meross"
   },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "test": "exit 0"
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
+  "contributors": [],
   "repository": "https://github.com/bytespider/Meross/tree/master",
   "license": "ISC",
   "dependencies": {
