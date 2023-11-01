@@ -18,7 +18,7 @@ export function generateTimestamp() {
   return Math.round(Date.now() / 1000);
 }
 
-export function computePassword(macAddress, key = '', userId = 0) {
+export function computeDevicePassword(macAddress, key = '', userId = 0) {
   const hash = createHash('md5').update(`${macAddress}${key}`).digest('hex');
   return `${userId}_${hash}`;
 }
