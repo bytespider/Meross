@@ -9,7 +9,7 @@
     "cli"
   ],
   "bin": {
-    "meross": "./bin/meross"
+    "meross": "./bin/meross.js"
   },
   "type": "module",
   "engines": {

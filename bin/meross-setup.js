@@ -4,8 +4,13 @@
 
 import pkg from '../package.json' assert { type: 'json' };
 import { program } from 'commander';
+import TerminalKit from 'terminal-kit';
+const terminal = TerminalKit.terminal;
 
-import { configureMqttServers, configureWifiCredentials } from '../src/api.js'
+import { configureDeviceTime, configureMqttBrokers, configureWifiParameters, queryDeviceAbility, queryDeviceInformation } from '../src/api.js'
+import { Namespace } from '../src/header.js';
+import { HTTP } from '../src/http.js';
+import { SecureWifiCredentials, WifiCredentials } from '../src/wifiCredentials.js';
 
 const collection = (value, store = []) => {
     store.push(value)
@@ -31,9 +36,9 @@ const parseIntWithValidation = (value) => {
 program
     .version(pkg.version)
     .arguments('<options>')
-    .requiredOption('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
-    .requiredOption('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
-    .requiredOption('--wifi-pass <wifi-pass>', 'WIFI AP password')
+    .requiredOption('-a, --ip <ip>', 'Send command to device with this IP address', '10.10.10.1')
+    .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
+    .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
     .option('--wifi-encryption <wifi-encryption>', 'WIFI AP encryption(this can be found using meross info --include-wifi)', parseIntWithValidation)
     .option('--wifi-cipher <wifi-cipher>', 'WIFI AP cipher (this can be found using meross info --include-wifi)', parseIntWithValidation)
     .option('--wifi-bssid <wifi-bssid>', 'WIFI AP BSSID (each octet seperated by a colon `:`)')
@@ -41,37 +46,83 @@ program
     .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
     .option('-u, --user <user-id>', 'Integer id. Only useful for connecting to Meross Cloud.', parseIntWithValidation, 0)
     .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
-    .option('-s, --secure-credentials', 'Send WIFI credentials to the device securely. ONLY Firmware >= 6s')
     .option('-v, --verbose', 'Show debugging messages', '')
     .parse(process.argv)
 
 const options = program.opts();
 
-(async () => {
-    const gateway = options.gateway
-    const key = options.key
-    const userId = options.user
-    const verbose = options.verbose
+const ip = options.ip;
+const key = options.key;
+const userId = options.user;
+const verbose = options.verbose;
+
+let spinner = await terminal.spinner({ rightPadding: ' ' })
+try {
+    const http = new HTTP(ip);
+
+    await configureDeviceTime({
+        http,
+        key,
+        userId,
+    });
+
+    terminal("\n• Configured Device time.");
 
     if (options.mqtt && options.mqtt.length) {
-        await configureMqttServers({
+        await configureMqttBrokers({
+            http,
             key,
-            ip: gateway,
+            userId,
             mqtt: options.mqtt
         });
+        terminal("\n• Configured MQTT brokers.");
     }
 
-    await configureWifiCredentials({
-        key,
-        ip: gateway,
-        credentials: {
-            ssid: options.wifiSsid,
-            password: options.wifiPass,
-            channel: options.wifiChannel,
-            encryption: options.wifiEncryption,
-            cipher: options.wifiCipher,
-            bssid: options.wifiBssid,
+    if (options.wifiSsid && options.wifiPass) {
+        const deviceAbility = await queryDeviceAbility({
+            http,
+            key,
+            userId,
+        });
+
+        deviceAbility[Namespace.CONFIG_WIFIX] = {};
+
+        let credentials;
+        if (Namespace.CONFIG_WIFIX in deviceAbility) {
+            const deviceInformation = await queryDeviceInformation({
+                http,
+                key,
+                userId,
+            });
+
+            credentials = new SecureWifiCredentials(options.wifiSsid, options.wifiPass);
+            credentials.encrypt({
+                ...deviceInformation.hardware
+            });
+            console.log(credentials);
+            process.exit();
+        } else {
+            credentials = new WifiCredentials(options.wifiSsid, options.wifiPass);
         }
-    });
-    console.log(`Device will reboot...`)
-})()
+
+        await configureWifiParameters({
+            http,
+            key,
+            userId,
+            parameters: {
+                credentials,
+                channel: options.wifiChannel,
+                encryption: options.wifiEncryption,
+                cipher: options.wifiCipher,
+                bssid: options.wifiBssid,
+            }
+        });
+
+        terminal("\n• Configured WIFI.");
+        terminal.green(`Device will now reboot...`);
+    }
+} catch (error) {
+    terminal.red(error.message);
+} finally {
+    spinner.animate(false);
+}

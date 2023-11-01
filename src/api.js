@@ -1,7 +1,6 @@
 import { Logger } from 'winston';
-import got, { HTTPError } from 'got';
 import { Message } from "./message.js";
-import { Namespace, Method } from "./header.js";
+import { Namespace, Method, ResponseMethod } from "./header.js";
 import { URL } from "url";
 import { base64, filterUndefined } from './util.js';
 
@@ -21,9 +20,9 @@ const DeviceInformation = {}
  */
 export async function queryDeviceInformation(opts) {
   const {
+    http,
     key = '',
     userId = 0,
-    ip = '10.10.10.1',
     logger,
   } = opts ?? {};
 
@@ -35,26 +34,15 @@ export async function queryDeviceInformation(opts) {
 
 
   // send message
-  try {
-    const url = `http:/${ip}/config`
-    let response = await got.post(url, {
-      timeout: {
-        request: 10000
-      },
-      json: message
-    }).json();
-
-    return response.payload.all;
-  } catch (error) {
-    throw error;
-  }
+  const { payload: { all: deviceInformation } } = await http.send(message);
+  return deviceInformation;
 }
 
 export async function queryDeviceWifiList(opts) {
   const {
+    http,
     key = '',
     userId = 0,
-    ip = '10.10.10.1',
     logger,
   } = opts ?? {};
 
@@ -65,27 +53,35 @@ export async function queryDeviceWifiList(opts) {
   message.sign(key);
 
   // send message
-  try {
-    const url = `http://${ip}/config`;
-    let response = await got.post(url, {
-      timeout: {
-        request: 10000
-      },
-      json: message
-    }).json();
+  const { payload: { wifiList } } = await http.send(message);
+  return wifiList;
+}
 
-    return response.payload.wifiList;
-  } catch (error) {
-    throw error;
-  }
+export async function queryDeviceAbility(opts) {
+  const {
+    http,
+    key = '',
+    userId = 0,
+    logger,
+  } = opts ?? {};
+
+  // create message
+  const message = new Message();
+  message.header.method = Method.GET;
+  message.header.namespace = Namespace.SYSTEM_ABILITY;
+  message.sign(key);
+
+  // send message
+  const { payload: { ability } } = await http.send(message);
+  return ability;
 }
 
 export async function configureDeviceTime(opts) {
   const {
+    http,
     key = '',
     userId = 0,
-    ip = '10.10.10.1',
-    timeZone = 'Etc/UTC',
+    timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone,
     timeRules = [],
     logger,
   } = opts ?? {};
@@ -105,40 +101,15 @@ export async function configureDeviceTime(opts) {
   };
 
   // send message
-  try {
-    const url = `http://${ip}/config`;
-    let response = await got.post(url, {
-      timeout: {
-        request: 10000
-      },
-      json: message,
-    }).json();
-
-    console.log(response);
-
-    return true;
-  } catch (error) {
-    if (!error.response) {
-      switch (error.code) {
-        case 'ENETUNREACH':
-        case 'ECONNABORTED':
-          logger?.error('Unable to connect to device');
-          break;
-
-        default:
-          logger?.error(error.message);
-      }
-    }
-
-    process.exit(1);
-  }
+  const { header: { method } } = await http.send(message);
+  return method == ResponseMethod.SETACK;
 }
 
-export async function configureMqttServers(opts) {
+export async function configureMqttBrokers(opts) {
   const {
+    http,
     key = '',
     userId = 0,
-    ip = '10.10.10.1',
     mqtt = [],
     logger,
   } = opts ?? {};
@@ -149,7 +120,7 @@ export async function configureMqttServers(opts) {
   message.header.namespace = Namespace.CONFIG_KEY;
   message.sign(key);
 
-  const servers = mqtt?.map(address => {
+  const brokers = mqtt?.map(address => {
     let { protocol, hostname: host, port } = new URL(address);
     if (!port) {
       if (protocol === 'mqtt:') {
@@ -160,58 +131,38 @@ export async function configureMqttServers(opts) {
       }
     }
     return { host, port }
-  });
+  }).slice(0, 2);
 
   message.payload = {
     key: {
       userId: `${userId}`,
       key,
       gateway: {
-        host: servers[0].host,
-        port: servers[0].port,
-        secondHost: servers[servers.length > 1 ? 1 : 0].host,
-        secondPort: servers[servers.length > 1 ? 1 : 0].port,
+        host: brokers[0].host,
+        port: brokers[0].port,
+        secondHost: brokers[brokers.length > 1 ? 1 : 0].host,
+        secondPort: brokers[brokers.length > 1 ? 1 : 0].port,
         redirect: 1,
       }
     }
   };
 
   // send message
-  try {
-    const url = `http://${ip}/config`;
-    let response = await got.post(url, {
-      timeout: {
-        request: 10000
-      },
-      json: message
-    }).json();
-
-    console.log(response);
-
-    return true;
-  } catch (error) {
-    throw error;
-  }
+  const { header: { method } } = await http.send(message);
+  return method == ResponseMethod.SETACK;
 }
 
-export async function configureWifiCredentials(opts) {
+export async function configureWifiParameters(opts) {
   const {
+    http,
     key = '',
     userId = 0,
-    ip = '10.10.10.1',
-    credentials = {
-      ssid,
-      password,
-      channel,
-      encryption,
-      cipher,
-      bssid,
+    parameters: {
+      credentials,
+      ...parameters
     },
     logger,
   } = opts ?? {};
-
-  const ssid = base64.encode(credentials?.ssid);
-  const password = base64.encode(credentials?.password);
 
   // create message
   const message = new Message();
@@ -221,26 +172,32 @@ export async function configureWifiCredentials(opts) {
 
   message.payload = {
     wifi: {
-      ...filterUndefined(credentials),
-      ssid,
-      password,
+      ...filterUndefined(parameters),
+      ssid: base64.encode(credentials.ssid),
+      password: base64.encode(credentials.password),
     }
   };
 
   // send message
-  try {
-    const url = `http://${ip}/config`;
-    let response = await got.post(url, {
-      timeout: {
-        request: 10000
-      },
-      json: message
-    }).json();
+  const { header: { method } } = await http.send(message);
+  return method == ResponseMethod.SETACK;
+}
 
-    console.log(response);
+export async function queryDeviceTime(opts) {
+  const {
+    http,
+    key = '',
+    userId = 0,
+    logger,
+  } = opts ?? {};
 
-    return true;
-  } catch (error) {
-    throw error;
-  }
+  // create message
+  const message = new Message();
+  message.header.method = Method.GET;
+  message.header.namespace = Namespace.SYSTEM_TIME;
+  message.sign(key);
+
+  // send message
+  const { time } = await http.send(message);
+  return time;
 }
