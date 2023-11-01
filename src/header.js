@@ -15,6 +15,15 @@ export const Method = {
  * @readonly
  * @enum {string}
  */
+export const ResponseMethod = {
+  GETACK: 'GETACK',
+  SETACK: 'SETACK',
+}
+
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const Namespace = {
   // Common abilities
   SYSTEM_ALL: 'Appliance.System.All',
