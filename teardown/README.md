@@ -662,11 +662,19 @@ Not sure what this information relates to. Perhaps the build environment for the
 ### LED status
 
 #### Red flashing
-Device is in factory mode. As far as I can tell the only way back is via serial and running the commands
+Device is in factory mode. You can get back via serial and running the commands
 ```
 $ meross fac 0
 $ reboot
 ```
+or using the following steps provided by Meross Support (thanks to Alex Brosi for this information for a MSS425e):
+1. Launch a wifi hotspot using an Android phone or your router;
+2. Rename it exactly as `Meross_factory_mss425e`;
+3. Don't set any password for it. Leave it an open wifi so that the switch can connect to it.
+4. Put your phone or wifi router close to the switch/plug and it will auto connect.
+5. Wait for 1-3min and the switch/plug should reboot itself, and the LED should be blinking amber and green.
+
+I *assume* that you need to change the AP name to match your device for example `Meross_factory_mss310`
 
 #### Green Orange Alternating
 Device is in pairing mode
