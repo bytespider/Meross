@@ -1,6 +1,6 @@
 # Meross utilities
 
-[![Node.js Package](https://github.com/bytespider/Meross/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/bytespider/Meross/actions/workflows/npm-publish.yml)
+[![Node.js Package](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml/badge.svg)](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml)
 
 Tools to help configure the Meross devices to use private MQTT servers.
 
