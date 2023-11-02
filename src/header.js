@@ -1,6 +1,3 @@
-import { randomUUID } from 'node:crypto';
-import { generateId, generateTimestamp } from './util.js';
-
 /**
  * @readonly
  * @enum {string}
@@ -18,6 +15,8 @@ export const Method = {
 export const ResponseMethod = {
   GETACK: 'GETACK',
   SETACK: 'SETACK',
+  [Method.GET]: 'GETACK',
+  [Method.SET]: 'SETACK',
 }
 
 /**
@@ -27,6 +26,8 @@ export const ResponseMethod = {
 export const Namespace = {
   // Common abilities
   SYSTEM_ALL: 'Appliance.System.All',
+  SYSTEM_FIRMWARE: 'Appliance.System.Firmware',
+  SYSTEM_HARDWARE: 'Appliance.System.Hardware',
   SYSTEM_ABILITY: 'Appliance.System.Ability',
   SYSTEM_ONLINE: 'Appliance.System.Online',
   SYSTEM_REPORT: 'Appliance.System.Report',
@@ -118,30 +119,34 @@ export class Header {
   timestamp;
 
   /**
+   * @type {number}
+   * @public
+   */
+  payloadVersion = 1;
+
+  /**
    * @type {string}
    * @public
    */
   sign;
 
   /**
-   * @param {Object} opts 
-   * @param {string} [opts.from=]
-   * @param {string} [opts.messageId=] 
-   * @param {number} [opts.timestamp=] 
-   * @param {string} opts.sign 
-   * @param {Method} opts.method 
-   * @param {Namespace} opts.namespace 
+   * @param {Object} [opts] 
+   * @param {string} [opts.from]
+   * @param {string} [opts.messageId] 
+   * @param {number} [opts.timestamp] 
+   * @param {string} [opts.sign]
+   * @param {Method} [opts.method] 
+   * @param {Namespace} [opts.namespace] 
    */
-  constructor(opts) {
-    const {
-      from = `/app/meross-${randomUUID()}/`,
-      messageId = generateId(),
-      timestamp = generateTimestamp(),
-      sign,
-      method,
-      namespace,
-    } = opts ?? {};
-
+  constructor({
+    from,
+    messageId,
+    timestamp,
+    sign,
+    method,
+    namespace,
+  } = {}) {
     this.from = from;
     this.messageId = messageId;
     this.timestamp = timestamp;

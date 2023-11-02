@@ -25,7 +25,7 @@ export const bar = (percent, width) => {
     return (percentToColor(percent) + '▉').repeat(filled) + partials[Math.floor((ticks - filled) * partials.length)] + ' '.repeat(open);
 }
 
-export async function printDeviceTable(deviceInformation, deviceAbility = null, deviceTime = null, wifiList = null) {
+export async function printDeviceTable(deviceInformation, deviceAbility = null, deviceTime = null) {
     const { system: { hardware: hw, firmware: fw } } = deviceInformation;
 
     const rows = [
@@ -60,7 +60,7 @@ export async function printDeviceTable(deviceInformation, deviceAbility = null, 
     if (deviceTime) {
         const date = new Date(deviceTime.timestamp * 1000);
         rows.push([
-            'Device Time', new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'long', timeZone: deviceTime.timeZone }).format(date)
+            'System Time', new Intl.DateTimeFormat(undefined, { dateStyle: 'full', timeStyle: 'long', timeZone: deviceTime.timeZone }).format(date)
         ]);
     }
 
