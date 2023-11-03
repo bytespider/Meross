@@ -24,7 +24,7 @@ export class Transport {
     message.header.timestamp = generateTimestamp();
     message.sign(signatureKey);
 
-    console.debug({ ...message });
+    // console.debug({ ...message });
 
     const response = await this._send(message);
     const { header } = response;
