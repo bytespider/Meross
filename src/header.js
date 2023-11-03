@@ -17,7 +17,7 @@ export const ResponseMethod = {
   SETACK: 'SETACK',
   [Method.GET]: 'GETACK',
   [Method.SET]: 'SETACK',
-}
+};
 
 /**
  * @readonly
@@ -34,6 +34,7 @@ export const Namespace = {
   SYSTEM_DEBUG: 'Appliance.System.Debug',
   SYSTEM_CLOCK: 'Appliance.System.Clock',
   SYSTEM_TIME: 'Appliance.System.Time',
+  SYSTEM_GEOLOCATION: 'Appliance.System.Position',
 
   CONTROL_BIND: 'Appliance.Control.Bind',
   CONTROL_UNBIND: 'Appliance.Control.Unbind',
@@ -131,22 +132,15 @@ export class Header {
   sign;
 
   /**
-   * @param {Object} [opts] 
+   * @param {Object} [opts]
    * @param {string} [opts.from]
-   * @param {string} [opts.messageId] 
-   * @param {number} [opts.timestamp] 
+   * @param {string} [opts.messageId]
+   * @param {number} [opts.timestamp]
    * @param {string} [opts.sign]
-   * @param {Method} [opts.method] 
-   * @param {Namespace} [opts.namespace] 
+   * @param {Method} [opts.method]
+   * @param {Namespace} [opts.namespace]
    */
-  constructor({
-    from,
-    messageId,
-    timestamp,
-    sign,
-    method,
-    namespace,
-  } = {}) {
+  constructor({ from, messageId, timestamp, sign, method, namespace } = {}) {
     this.from = from;
     this.messageId = messageId;
     this.timestamp = timestamp;
