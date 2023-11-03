@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import { Header, Method, Namespace } from './header.js';
 import { generateTimestamp, filterUndefined, base64 } from './util.js';
+import { encryptPassword } from './wifi.js';
 
 /**
  *
@@ -29,7 +30,6 @@ export class QuerySystemInformationMessage extends Message {
 
     this.header.method = Method.GET;
     this.header.namespace = Namespace.SYSTEM_ALL;
-    this.payload = {};
   }
 }
 
@@ -39,7 +39,6 @@ export class QuerySystemFirmwareMessage extends Message {
 
     this.header.method = Method.GET;
     this.header.namespace = Namespace.SYSTEM_FIRMWARE;
-    this.payload = {};
   }
 }
 
@@ -49,7 +48,6 @@ export class QuerySystemHardwareMessage extends Message {
 
     this.header.method = Method.GET;
     this.header.namespace = Namespace.SYSTEM_HARDWARE;
-    this.payload = {};
   }
 }
 
@@ -59,7 +57,6 @@ export class QuerySystemAbilityMessage extends Message {
 
     this.header.method = Method.GET;
     this.header.namespace = Namespace.SYSTEM_ABILITY;
-    this.payload = {};
   }
 }
 
@@ -69,7 +66,6 @@ export class QuerySystemTimeMessage extends Message {
 
     this.header.method = Method.GET;
     this.header.namespace = Namespace.SYSTEM_TIME;
-    this.payload = {};
   }
 }
 
@@ -99,7 +95,6 @@ export class QueryNearbyWifiMessage extends Message {
 
     this.header.method = Method.GET;
     this.header.namespace = Namespace.CONFIG_WIFI_LIST;
-    this.payload = {};
   }
 }
 
@@ -161,7 +156,12 @@ export class ConfigureWifiMessage extends Message {
 }
 
 export class ConfigureWifiXMessage extends ConfigureWifiMessage {
-  constructor({ wifiAccessPoint } = {}) {
+  constructor({ wifiAccessPoint, hardware } = {}) {
+    wifiAccessPoint.password = encryptPassword({
+      password: wifiAccessPoint.password,
+      hardware,
+    });
+
     super({ wifiAccessPoint });
 
     this.header.namespace = Namespace.CONFIG_WIFIX;
