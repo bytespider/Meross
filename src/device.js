@@ -1,4 +1,4 @@
-import { Namespace } from './header.js';
+import { Method, Namespace } from './header.js';
 import {
   ConfigureMQTTMessage,
   QuerySystemFirmwareMessage,
@@ -10,6 +10,7 @@ import {
   SetSystemTimeMessage,
   ConfigureWifiXMessage,
   ConfigureWifiMessage,
+  Message,
 } from './message.js';
 import { Transport } from './transport.js';
 import { WifiAccessPoint, encryptPassword } from './wifi.js';
@@ -69,6 +70,17 @@ export class Device {
    */
   set transport(transport) {
     this.#transport = transport;
+  }
+
+  async queryCustom(namespace) {
+    const message = new Message();
+    message.header.method = Method.GET;
+    message.header.namespace = namespace;
+
+    return this.#transport.send({
+      message,
+      signatureKey: this.credentials.key,
+    });
   }
 
   async querySystemInformation(updateDevice = true) {
@@ -230,16 +242,9 @@ export class Device {
     let message;
     if (Namespace.CONFIG_WIFIX in abilities) {
       const hardware = await this.querySystemHardware();
-
-      const password = await encryptPassword({
-        password: wifiAccessPoint.password,
-        hardware,
-      });
       message = new ConfigureWifiXMessage({
-        wifiAccessPoint: {
-          ...wifiAccessPoint,
-          password,
-        },
+        wifiAccessPoint,
+        hardware,
       });
     } else {
       message = new ConfigureWifiMessage({ wifiAccessPoint });
