@@ -7,7 +7,7 @@ import {
   QuerySystemAbilityMessage,
   QuerySystemInformationMessage,
   QuerySystemTimeMessage,
-  SetSystemTimeMessage,
+  ConfigureSystemTimeMessage,
   ConfigureWifiXMessage,
   ConfigureWifiMessage,
   Message,
@@ -72,10 +72,23 @@ export class Device {
     this.#transport = transport;
   }
 
-  async queryCustom(namespace) {
+  async queryCustom(namespace, payload = {}) {
     const message = new Message();
     message.header.method = Method.GET;
     message.header.namespace = namespace;
+    message.payload = payload;
+
+    return this.#transport.send({
+      message,
+      signatureKey: this.credentials.key,
+    });
+  }
+
+  async configureCustom(namespace, payload = {}) {
+    const message = new Message();
+    message.header.method = Method.SET;
+    message.header.namespace = namespace;
+    message.payload = payload;
 
     return this.#transport.send({
       message,
@@ -187,8 +200,31 @@ export class Device {
     return time;
   }
 
-  async setSystemTime({ timestamp, timezone } = {}, updateDevice = true) {
-    const message = new SetSystemTimeMessage({ timestamp, timezone });
+  async configureSystemTime({ timestamp, timezone } = {}, updateDevice = true) {
+    const message = new ConfigureSystemTimeMessage({ timestamp, timezone });
+
+    await this.#transport.send({ message, signatureKey: this.credentials.key });
+
+    return true;
+  }
+
+  async querySystemGeolocation(updateDevice = true) {
+    const message = new QuerySystemTimeMessage();
+
+    const { payload } = await this.#transport.send({
+      message,
+      signatureKey: this.credentials.key,
+    });
+
+    const { position } = payload;
+    if (updateDevice) {
+    }
+
+    return position;
+  }
+
+  async configureSystemGeolocation({ position } = {}, updateDevice = true) {
+    const message = new ConfigureSystemPositionMessage({ position });
 
     await this.#transport.send({ message, signatureKey: this.credentials.key });
 

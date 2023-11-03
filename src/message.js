@@ -69,7 +69,7 @@ export class QuerySystemTimeMessage extends Message {
   }
 }
 
-export class SetSystemTimeMessage extends Message {
+export class ConfigureSystemTimeMessage extends Message {
   constructor({
     timestamp = generateTimestamp(),
     timezone = Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -86,6 +86,35 @@ export class SetSystemTimeMessage extends Message {
     }
     this.payload.time.timezone = timezone;
     this.payload.time.timeRule = timeRule;
+  }
+}
+
+export class QuerySystemGeolocationMessage extends Message {
+  constructor() {
+    super();
+
+    this.header.method = Method.GET;
+    this.header.namespace = Namespace.SYSTEM_GEOLOCATION;
+  }
+}
+
+export class ConfigureSystemGeolocationMessage extends Message {
+  constructor({
+    position = {
+      latitude: 0,
+      longitude: 0,
+    },
+  }) {
+    super();
+
+    this.header.method = Method.SET;
+    this.header.namespace = Namespace.SYSTEM_GEOLOCATION;
+    this.payload = {
+      position: {
+        latitude: Number(position.latitude),
+        longitude: Number(position.longitude),
+      },
+    };
   }
 }
 
