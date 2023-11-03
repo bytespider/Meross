@@ -48,9 +48,6 @@ try {
   const transport = new HTTPTransport({ ip });
   const device = new Device({ transport });
 
-  console.log(await device.queryCustom('Appliance.Config.Trace'));
-  process.exit();
-
   const deviceInformation = await device.querySystemInformation();
 
   let deviceAbility;
