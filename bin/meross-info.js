@@ -7,17 +7,9 @@ import { program } from 'commander';
 import TerminalKit from 'terminal-kit';
 const terminal = TerminalKit.terminal;
 
-import {
-  queryDeviceAbility,
-  queryDeviceTime,
-  queryDeviceInformation,
-  queryDeviceWifiList,
-} from '../src/api.js';
-import { HTTP } from '../src/http.js';
 import { printDeviceTable, printWifiListTable } from '../src/cli.js';
 import { Device } from '../src/device.js';
 import { HTTPTransport } from '../src/transport.js';
-import { WifiCipher } from '../src/wifi.js';
 
 program
   .version(pkg.version)
@@ -55,6 +47,9 @@ let spinner;
 try {
   const transport = new HTTPTransport({ ip });
   const device = new Device({ transport });
+
+  console.log(await device.queryCustom('Appliance.Config.Trace'));
+  process.exit();
 
   const deviceInformation = await device.querySystemInformation();
 
