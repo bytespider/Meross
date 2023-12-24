@@ -33,6 +33,7 @@ program
   .version(version)
   .arguments('[options]')
   .option('-g, --gateway <gateway>', 'Set the gateway address', '10.10.10.1')
+  .option('--nowifi', 'Do not configure WIFI')
   .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
   .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
   .option('--use-wifi-x', 'Use newer protocol on WifiX namespace with encrypted password')
@@ -52,30 +53,33 @@ if (!options.gateway) {
     process.exit(1)
 }
 
-if (!options.wifiSsid) {
-    console.error('WIFI ssid must be specified')
-    process.exit(1)
+if (!options.nowifi){
+    if (!options.wifiSsid) {
+        console.error('WIFI ssid must be specified')
+        process.exit(1)
+    }
+
+    if (!options.wifiPass) {
+        console.error('WIFI password must be specified')
+        process.exit(1)
+    }
+
+    if (undefined !== options.wifiChannel && isNaN(options.wifiChannel)) {
+        console.error('WIFI channel must be a number between 1-13')
+        process.exit(1)
+    }
+
+    if (undefined !== options.wifiEncryption && isNaN(options.wifiEncryption)) {
+        console.error('WIFI encryption must be a number')
+        process.exit(1)
+    }
+
+    if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
+        console.error('WIFI cipher must be a number')
+        process.exit(1)
+    }
 }
 
-if (!options.wifiPass) {
-    console.error('WIFI password must be specified')
-    process.exit(1)
-}
-
-if (undefined !== options.wifiChannel && isNaN(options.wifiChannel)) {
-    console.error('WIFI channel must be a number between 1-13')
-    process.exit(1)
-}
-
-if (undefined !== options.wifiEncryption && isNaN(options.wifiEncryption)) {
-    console.error('WIFI encryption must be a number')
-    process.exit(1)
-}
-
-if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
-    console.error('WIFI cipher must be a number')
-    process.exit(1)
-}
 
 (async () => {
     const gateway = options.gateway
@@ -92,13 +96,20 @@ if (undefined !== options.wifiCipher && isNaN(options.wifiCipher)) {
 
     await api.deviceInformation();
 
-    await api.configureWifiCredentials({
-        ssid: options.wifiSsid,
-        password: options.wifiPass,
-        channel: options.wifiChannel,
-        encryption: options.wifiEncryption,
-        cipher: options.wifiCipher,
-        bssid: options.wifiBssid,
-    }, options.useWifiX)
-    console.log(`Device will reboot...`)
+    if (!options.nowifi) {
+        await api.configureWifiCredentials({
+            ssid: options.wifiSsid,
+            password: options.wifiPass,
+            channel: options.wifiChannel,
+            encryption: options.wifiEncryption,
+            cipher: options.wifiCipher,
+            bssid: options.wifiBssid,
+        }, options.useWifiX)
+        console.log(`Device will reboot...`)
+    }
+    else{
+        console.log(`Device has been configured.`)
+    }
+
+
 })()
