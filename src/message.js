@@ -13,6 +13,10 @@ export class Message {
     this.payload = {};
   }
 
+  /**
+   * 
+   * @param {string} key 
+   */
   async sign(key = '') {
     const {
       messageId,
