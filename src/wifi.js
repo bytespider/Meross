@@ -1,5 +1,9 @@
 import { createCipheriv, createHash } from 'crypto';
 
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const WifiCipher = {
   NONE: 'NONE',
   WEP: 'WEP',
@@ -13,6 +17,10 @@ export const WifiCipher = {
   4: 'TIKPAES',
 };
 
+/**
+ * @readonly
+ * @enum {string}
+ */
 export const WifiEncryption = {
   0: 'OPEN',
   1: 'SHARE',
@@ -34,6 +42,16 @@ export const WifiEncryption = {
   WPA1PSKWPA2PS: 'WPA1PSKWPA2PSK',
 };
 
+/**
+ * 
+ * @param {object} [opts]
+ * @param {string} opts.password
+ * @param {object} opts.hardware
+ * @param {string} opts.hardware.type
+ * @param {string} opts.hardware.uuid
+ * @param {string} opts.hardware.macAddress
+ * @returns {string}
+ */
 export function encryptPassword({
   password,
   hardware: { type, uuid, macAddress },
@@ -60,6 +78,17 @@ export class WifiAccessPoint {
   password;
   signal;
 
+  /**
+   * 
+   * @param {object} [opts] 
+   * @param {string} [opts.ssid]
+   * @param {string} [opts.bssid]
+   * @param {number} [opts.channel]
+   * @param {WifiCipher} [opts.cipher]
+   * @param {WifiEncryption} [opts.encryption]
+   * @param {string} [opts.password]
+   * @param {number} [opts.signal]
+   */
   constructor({
     ssid,
     bssid,
@@ -78,10 +107,18 @@ export class WifiAccessPoint {
     this.signal = signal;
   }
 
+  /**
+   * 
+   * @returns boolean
+   */
   isOpen() {
     return this.encryption == Encryption.OPEN && this.cipher == Cipher.NONE;
   }
 
+  /**
+   * 
+   * @returns boolean
+   */
   isWEP() {
     return this.encryption == Encryption.OPEN && this.cipher == Cipher.WEP;
   }

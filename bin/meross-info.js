@@ -5,11 +5,12 @@
 import pkg from '../package.json' assert { type: 'json' };
 import { program } from 'commander';
 import TerminalKit from 'terminal-kit';
-const terminal = TerminalKit.terminal;
+const { terminal } = TerminalKit;
 
-import { printDeviceTable, printWifiListTable } from '../src/cli.js';
+import { printDeviceTable, printWifiListTable, progressFunctionWithMessage } from '../src/cli.js';
 import { Device } from '../src/device.js';
 import { HTTPTransport } from '../src/transport.js';
+import { Method, Namespace } from '../src/header.js';
 
 program
   .version(pkg.version)
@@ -43,9 +44,8 @@ const verbose = options.verbose;
 
 console.log(`Getting info about device with IP ${ip}`);
 
-let spinner;
 try {
-  const transport = new HTTPTransport({ ip });
+  const transport = new HTTPTransport({ ip })
   const device = new Device({ transport });
 
   const deviceInformation = await device.querySystemInformation();
@@ -63,21 +63,14 @@ try {
   await printDeviceTable(deviceInformation, deviceAbility, deviceTime);
 
   if (includeWifiList) {
-    spinner = await terminal.spinner({
-      animation: 'dotSpinner',
-      rightPadding: ' ',
-      attr: { color: 'cyan' },
-    });
-    terminal('Getting WIFI list…\n');
+    const wifiList = await progressFunctionWithMessage(() => {
+      return device.queryNearbyWifi();
+    }, 'Getting WIFI list');
 
-    const wifiList = await device.queryNearbyWifi();
-
-    await printWifiListTable(wifiList);
+    if (wifiList) {
+      await printWifiListTable(wifiList);
+    }
   }
 } catch (error) {
   terminal.red(error.message);
-} finally {
-  if (spinner) {
-    spinner.animate(false);
-  }
 }

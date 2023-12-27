@@ -5,11 +5,12 @@
 import pkg from '../package.json' assert { type: 'json' };
 import { program } from 'commander';
 import TerminalKit from 'terminal-kit';
-const terminal = TerminalKit.terminal;
+const { terminal } = TerminalKit;
 
 import { HTTPTransport } from '../src/transport.js';
 import { Device } from '../src/device.js';
 import { WifiAccessPoint } from '../src/wifi.js';
+import { progressFunctionWithMessage } from '../src/cli.js';
 
 const collection = (value, store = []) => {
   store.push(value);
@@ -71,6 +72,7 @@ program
     0
   )
   .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
+  .option('-t, --set-time', 'Configure device time with time and timezone of current host')
   .option('-v, --verbose', 'Show debugging messages', '')
   .parse(process.argv);
 
@@ -81,29 +83,32 @@ const key = options.key;
 const userId = options.user;
 const verbose = options.verbose;
 
-let spinner;
 try {
-  spinner = await terminal.spinner({
-    animation: 'dotSpinner',
-    rightPadding: ' ',
-    attr: { color: 'cyan' },
+  const transport = new HTTPTransport({ ip });
+  const device = new Device({
+    transport, credentials: {
+      userId,
+      key
+    }
   });
 
-  const transport = new HTTPTransport({ ip });
-  const device = new Device({ transport });
-
-  await device.setSystemTime();
-  terminal('• Configured Device time.\n');
+  const { setTime = false } = options;
+  if (setTime) {
+    await progressFunctionWithMessage(() => {
+      return device.configureSystemTime();
+    }, 'Comfiguring device time');
+  }
 
   const { mqtt = [] } = options;
   if (mqtt.length) {
-    await device.configureMQTTBrokers({
-      mqtt,
-    });
-    terminal('• Configured MQTT brokers.\n');
+    await progressFunctionWithMessage(() => {
+      return device.configureMQTTBrokers({
+        mqtt,
+      });
+    }, 'Configuring MQTT brokers');
   }
 
-  if (options.wifiSsid && options.wifiPass) {
+  if (options.wifiSsid || options.wifiBssid) {
     const wifiAccessPoint = new WifiAccessPoint({
       ssid: options.wifiSsid,
       password: options.wifiPass,
@@ -112,17 +117,16 @@ try {
       cipher: options.wifiCipher,
       bssid: options.wifiBssid,
     });
-    await device.configureWifi({
-      wifiAccessPoint,
-    });
+    let success = await progressFunctionWithMessage(() => {
+      return device.configureWifi({
+        wifiAccessPoint,
+      });
+    }, 'Configuring WIFI');
 
-    terminal('• Configured WIFI.\n');
-    terminal.green(`Device will now reboot...\n`);
+    if (success) {
+      terminal.yellow(`Device will now reboot…\n`);
+    }
   }
 } catch (error) {
   terminal.red(error.message);
-} finally {
-  if (spinner) {
-    spinner.animate(false);
-  }
 }

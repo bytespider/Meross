@@ -12,9 +12,20 @@ const tableOptions = {
   firstColumnTextAttr: { color: 'yellow' },
 };
 
+/**
+ * Converts a decimal between zero and one to TerminalKit color code
+ * @param {number} percent 
+ * @returns 
+ */
 export const percentToColor = (percent) =>
   percent > 0.7 ? '^G' : percent > 0.5 ? '^Y' : percent > 0.3 ? '^y' : '^r';
 
+/**
+ * Draws a coloured bar of specified width
+ * @param {number} percent 
+ * @param {number} width 
+ * @returns {string}
+ */
 export const bar = (percent, width) => {
   const partials = ['▏', '▎', '▍', '▌', '▋', '▊', '▉'];
   let ticks = percent * width;
@@ -30,6 +41,41 @@ export const bar = (percent, width) => {
   );
 };
 
+/**
+ * Draws a spinner and a message that is updated on success or failire
+ * @param {Function} callback 
+ * @param {string} message 
+ * @returns 
+ */
+export async function progressFunctionWithMessage(callback, message) {
+  let spinner = await terminal.spinner({
+    animation: 'dotSpinner',
+    rightPadding: ' ',
+    attr: { color: 'cyan' },
+  });
+  terminal(`${message}…`);
+
+  try {
+    const response = await callback();
+    spinner.animate(false);
+    terminal.saveCursor().column(0).green('✓').restoreCursor();
+    terminal('\n');
+    return response;
+  } catch (e) {
+    terminal.saveCursor().column(0).red('✗').restoreCursor();
+    terminal('\n');
+    throw e;
+  } finally {
+    spinner.animate(false);
+  }
+}
+
+/**
+ * 
+ * @param {object} deviceInformation 
+ * @param {object} deviceAbility 
+ * @param {object} deviceTime 
+ */
 export async function printDeviceTable(
   deviceInformation,
   deviceAbility = null,
@@ -86,21 +132,24 @@ export async function printDeviceTable(
     rows.push([
       'System Time',
       formatter.format(date) +
-        (deviceTime.timezone ? ` (${deviceTime.timezone})` : ''),
+      (deviceTime.timezone ? ` (${deviceTime.timezone})` : ''),
     ]);
   }
 
   terminal.table(rows, tableOptions);
 }
 
+/**
+ * Displays a list of WIFI Access Points
+ * @param {object[]} wifiList 
+ */
 export async function printWifiListTable(wifiList) {
   const rows = [['WIFI', 'Signal strength']];
 
   for (const { ssid, bssid, channel, encryption, cipher, signal } of wifiList) {
     const decodedSsid = base64.decode(ssid);
     rows.push([
-      `${
-        decodedSsid ? decodedSsid : '<hidden>'
+      `${decodedSsid ? decodedSsid : '<hidden>'
       }\n^B${bssid}^ ^+^YCh:^ ${channel} ^+^YEncryption:^ ${encryption} ^+^YCipher:^ ${cipher}`,
       bar(signal / 100, 20),
     ]);

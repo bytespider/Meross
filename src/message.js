@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import { Header, Method, Namespace } from './header.js';
 import { generateTimestamp, filterUndefined, base64 } from './util.js';
-import { encryptPassword } from './wifi.js';
+import { WifiAccessPoint, encryptPassword } from './wifi.js';
 
 /**
  *
@@ -15,6 +15,10 @@ export class Message {
     this.payload = {};
   }
 
+  /**
+   * 
+   * @param {string} key 
+   */
   async sign(key = '') {
     const { messageId, timestamp } = this.header;
 
@@ -70,6 +74,13 @@ export class QuerySystemTimeMessage extends Message {
 }
 
 export class ConfigureSystemTimeMessage extends Message {
+  /**
+   * 
+   * @param {object} [opts]
+   * @param {number} [opts.timestamp]
+   * @param {string} [opts.timezone]
+   * @param {any[]} [opts.timeRule]
+   */
   constructor({
     timestamp = generateTimestamp(),
     timezone = Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -99,6 +110,13 @@ export class QuerySystemGeolocationMessage extends Message {
 }
 
 export class ConfigureSystemGeolocationMessage extends Message {
+  /**
+   * 
+   * @param {object} [opts]
+   * @param {object} [opts.position ]
+   * @param {number} [opts.position.latitude]
+   * @param {number} [opts.position.longitude]
+   */
   constructor({
     position = {
       latitude: 0,
@@ -128,7 +146,13 @@ export class QueryNearbyWifiMessage extends Message {
 }
 
 export class ConfigureMQTTMessage extends Message {
-  constructor({ mqtt = [], credentials } = {}) {
+  /**
+   * 
+   * @param {object} opts 
+   * @param {string[]} [opts.mqtt]
+   * @param {import('./device.js').DeviceCredentials} opts.credentials 
+   */
+  constructor({ mqtt = [], credentials }) {
     super();
 
     this.header.method = Method.SET;
@@ -169,23 +193,41 @@ export class ConfigureMQTTMessage extends Message {
 }
 
 export class ConfigureWifiMessage extends Message {
-  constructor({ wifiAccessPoint } = {}) {
+  /**
+   * 
+   * @param {object} opts 
+   * @param {WifiAccessPoint} param0.wifiAccessPoint
+   */
+  constructor({ wifiAccessPoint }) {
     super();
 
     this.header.method = Method.SET;
     this.header.namespace = Namespace.CONFIG_WIFI;
+
     this.payload = {
       wifi: {
         ...filterUndefined(wifiAccessPoint),
-        ssid: base64.encode(wifiAccessPoint.ssid),
-        password: base64.encode(wifiAccessPoint.password),
       },
     };
+
+    if (wifiAccessPoint.ssid) {
+      this.payload.wifi.ssid = base64.encode(wifiAccessPoint.ssid);
+    }
+
+    if (wifiAccessPoint.password) {
+      this.payload.wifi.password = base64.encode(wifiAccessPoint.password);
+    }
   }
 }
 
 export class ConfigureWifiXMessage extends ConfigureWifiMessage {
-  constructor({ wifiAccessPoint, hardware } = {}) {
+  /**
+   * 
+   * @param {object} opts 
+   * @param {WifiAccessPoint} opts.wifiAccessPoint 
+   * @param {import('./device.js').DeviceHardware} opts.hardware 
+   */
+  constructor({ wifiAccessPoint, hardware }) {
     wifiAccessPoint.password = encryptPassword({
       password: wifiAccessPoint.password,
       hardware,

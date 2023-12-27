@@ -9,22 +9,41 @@ export class Transport {
   #id = `/app/meross-${randomUUID()}/`;
   timeout;
 
+  /**
+   * @typedef TransportOptions
+   * @property {string} id
+   * @property {number} timeout
+   */
+  /**
+   * 
+   * @param {TransportOptions} 
+   */
   constructor({ id = `/app/meross-${randomUUID()}/`, timeout = 10000 } = {}) {
     this.#id = id;
     this.timeout = timeout;
   }
 
   /**
+   * @typedef MessageSendOptions
+   * @property {Message} message
+   * @property {string} signatureKey
+   */
+  /**
    *
-   * @param {Message} message
+   * @param {MessageSendOptions} message
+   * @returns {Promise<any>}
+   * @throws Response was not {ResponseMethod}
    */
   async send({ message, signatureKey = '' } = {}) {
-    message.header.from = this.id;
-    message.header.messageId = generateId();
-    message.header.timestamp = generateTimestamp();
-    message.sign(signatureKey);
 
-    // console.debug({ ...message });
+    message.header.from = this.id;
+    if (!message.header.messageId) {
+      message.header.messageId = generateId();
+    }
+    if (!message.header.timestamp) {
+      message.header.timestamp = generateTimestamp();
+    }
+    message.sign(signatureKey);
 
     const response = await this._send(message);
     const { header } = response;
@@ -39,6 +58,13 @@ export class Transport {
 }
 
 export class MockTransport extends Transport {
+  /**
+   * @typedef MockTransportOptions
+   * @extends TransportOptions
+   */
+  /**
+   * @param {MockTransportOptions}
+   */
   constructor() {
     super();
   }
@@ -47,9 +73,19 @@ export class MockTransport extends Transport {
 export class HTTPTransport extends Transport {
   #ip;
 
+  /**
+   * @typedef HTTPTransportOptions 
+   * @property {string} ip
+   */
+
+  /**
+   * 
+   * @param {TransportOptions & HTTPTransportOptions} 
+   * @throws HTTPTransport: IP needs to be an IPv4 address
+   */
   constructor({ ip = '10.10.10.1' }) {
     if (!isIPv4(ip)) {
-      throw new Error('HTTPTransport: IP needs to be and IPv4 address');
+      throw new Error('HTTPTransport: IP needs to be an IPv4 address');
     }
 
     super();
@@ -64,6 +100,8 @@ export class HTTPTransport extends Transport {
   /**
    * @private
    * @param {Message} message
+   * @throws Host refused connection. Is the device IP '{IP Address}' correct?
+   * @throws Timeout awaiting {Message Namespace} for 10000s
    */
   async _send(message) {
     try {
