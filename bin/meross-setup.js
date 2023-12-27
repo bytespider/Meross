@@ -43,31 +43,31 @@ program
     'Send command to device with this IP address',
     '10.10.10.1'
   )
-  .option('--wifi-ssid <wifi-ssid>', 'WIFI AP name')
-  .option('--wifi-pass <wifi-pass>', 'WIFI AP password')
+  .option('--wifi-ssid <wifi-ssid>', 'WIFI Access Point name')
+  .option('--wifi-pass <wifi-pass>', 'WIFI Access Point password')
   .option(
     '--wifi-encryption <wifi-encryption>',
-    'WIFI AP encryption(this can be found using meross info --include-wifi)',
+    'WIFI Access Point encryption (this can be found using meross info --include-wifi)',
     parseIntWithValidation
   )
   .option(
     '--wifi-cipher <wifi-cipher>',
-    'WIFI AP cipher (this can be found using meross info --include-wifi)',
+    'WIFI Access Point cipher (this can be found using meross info --include-wifi)',
     parseIntWithValidation
   )
   .option(
     '--wifi-bssid <wifi-bssid>',
-    'WIFI AP BSSID (each octet seperated by a colon `:`)'
+    'WIFI Access Point BSSID (each octet seperated by a colon `:`)'
   )
   .option(
     '--wifi-channel <wifi-channel>',
-    'WIFI AP 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)',
+    'WIFI Access Point 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)',
     numberInRange(1, 13)
   )
   .option('--mqtt <mqtt-server>', 'MQTT server address', collection)
   .option(
     '-u, --user <user-id>',
-    'Integer id. Only useful for connecting to Meross Cloud.',
+    'Integer id. Used by devices connected to the Meross Cloud',
     parseIntWithValidation,
     0
   )

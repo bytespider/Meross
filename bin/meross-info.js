@@ -10,7 +10,6 @@ const { terminal } = TerminalKit;
 import { printDeviceTable, printWifiListTable, progressFunctionWithMessage } from '../src/cli.js';
 import { Device } from '../src/device.js';
 import { HTTPTransport } from '../src/transport.js';
-import { Method, Namespace } from '../src/header.js';
 
 program
   .version(pkg.version)
@@ -22,11 +21,11 @@ program
   )
   .option(
     '-u, --user <user-id>',
-    'Integer id. Only useful for connecting to Meross Cloud.',
+    'Integer id. Used by devices connected to the Meross Cloud',
     parseInt
   )
   .option('-k, --key <shared-key>', 'Shared key for generating signatures', '')
-  .option('--include-wifi', 'List WIFI access points near the device')
+  .option('--include-wifi', 'List WIFI Access Points near the device')
   .option('--include-ability', 'List device ability list')
   .option('--include-time', 'List device time')
   .option('-v, --verbose', 'Show debugging messages')
@@ -46,7 +45,12 @@ console.log(`Getting info about device with IP ${ip}`);
 
 try {
   const transport = new HTTPTransport({ ip })
-  const device = new Device({ transport });
+  const device = new Device({
+    transport, credentials: {
+      userId,
+      key
+    }
+  });
 
   const deviceInformation = await device.querySystemInformation();
 
