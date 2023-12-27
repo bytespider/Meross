@@ -1,6 +1,6 @@
 {
   "name": "meross",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Utility to configure Meross devices for local MQTT",
   "keywords": [
     "smarthome",
