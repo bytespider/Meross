@@ -1,18 +1,13 @@
 # Meross utilities
 
-[![Node.js Package](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml/badge.svg)](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml)
+[![Node.js Package](https://github.com/bytespider/Meross/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/bytespider/Meross/actions/workflows/npm-publish.yml)
 
 Tools to help configure the Meross devices to use private MQTT servers.
 
 ## Requirements
 
-<<<<<<< HEAD
 NodeJS: ^21.0.0, ^20.10.0, ^18.20.0
 NPM: ^10.0.0
-=======
-Requires `node` >=18  
-For Node.js >=21 you need to prepend commands with `NODE_OPTIONS='--insecure-http-parser'`. This is because the responses from some (if not all) versions of the Meross firmware incorrectly terminate headers with LF instead of CRLF. [CVE-2022-32214](https://nvd.nist.gov/vuln/detail/CVE-2022-32214)
->>>>>>> f7172c7 (1.0.16 (#94))
 
 ## Setup
 
