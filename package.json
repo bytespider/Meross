@@ -6,6 +6,7 @@
     "smarthome",
     "mqtt",
     "meross",
+    "refoss",
     "cli"
   ],
   "bin": {
