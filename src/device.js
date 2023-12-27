@@ -13,18 +13,39 @@ import {
   Message,
 } from './message.js';
 import { Transport } from './transport.js';
-import { WifiAccessPoint, encryptPassword } from './wifi.js';
+import { WifiAccessPoint } from './wifi.js';
 
+/**
+ * @typedef DeviceCredentials
+ * @property {number} userId
+ * @property {string} key
+ */
+
+/** @type {DeviceCredentials} */
 const CredentialDefaults = {
   userId: 0,
   key: '',
 };
 
+/**
+ * @typedef DeviceFirmware
+ * @property {string} version
+ * @property {number} compileTime
+ */
+
+/** @type {DeviceFirmware} */
 const FirmwareDefaults = {
   version: '0.0.0',
   compileTime: new Date().toString(),
 };
 
+/**
+ * @typedef DeviceHardware
+ * @property {string} version
+ * @property {string} macAddress
+ */
+
+/** @type {DeviceHardware} */
 const HardwareDefaults = {
   version: '0.0.0',
   macAddress: '00:00:00:00:00:00',
@@ -41,6 +62,20 @@ export class Device {
   firmware;
   credentials;
 
+  ability = {};
+
+  /**
+   * @typedef DeviceOptions
+   * @property {Transport} transport
+   * @property {string} model
+   * @property {DeviceFirmware} firmware
+   * @property {DeviceHardware} hardware
+   * @property {DeviceCredentials} credentials
+   */
+  /**
+   * 
+   * @param {DeviceOptions}
+   */
   constructor({
     transport,
     model = '',
@@ -72,6 +107,12 @@ export class Device {
     this.#transport = transport;
   }
 
+  /**
+   * 
+   * @param {Namespace} namespace 
+   * @param {object} [payload] 
+   * @returns {Promise<any>}
+   */
   async queryCustom(namespace, payload = {}) {
     const message = new Message();
     message.header.method = Method.GET;
@@ -84,6 +125,12 @@ export class Device {
     });
   }
 
+  /**
+   * 
+   * @param {Namespace} namespace 
+   * @param {object} [payload] 
+   * @returns  {Promise<any>}
+   */
   async configureCustom(namespace, payload = {}) {
     const message = new Message();
     message.header.method = Method.SET;
@@ -96,6 +143,17 @@ export class Device {
     });
   }
 
+  /**
+   * @typedef QuerySystemInformationResponse
+   * @property {object} system
+   * @property {QuerySystemFirmwareResponse} system.firmware
+   * @property {QuerySystemHardwareResponse} system.hardware
+   */
+  /**
+   * 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<QuerySystemInformationResponse>}
+   */
   async querySystemInformation(updateDevice = true) {
     const message = new QuerySystemInformationMessage();
     message.sign(this.credentials.key);
@@ -128,6 +186,16 @@ export class Device {
     return all;
   }
 
+  /**
+   * @typedef QuerySystemFirmwareResponse
+   * @property {string} version
+   * @property {number} compileTime
+   */
+  /**
+   * 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<QuerySystemFirmwareResponse>}
+   */
   async querySystemFirmware(updateDevice = true) {
     const message = new QuerySystemFirmwareMessage();
 
@@ -150,6 +218,16 @@ export class Device {
     return firmware;
   }
 
+  /**
+   * @typedef QuerySystemHardwareResponse
+   * @property {string} version
+   * @property {string} macAddress
+   */
+  /**
+   * 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<QuerySystemHardwareResponse>}
+   */
   async querySystemHardware(updateDevice = true) {
     const message = new QuerySystemHardwareMessage();
 
@@ -170,6 +248,28 @@ export class Device {
     return hardware;
   }
 
+  /**
+   * 
+   * @param {Namespace} ability 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<boolean>}
+   */
+  async hasSystemAbility(ability, updateDevice = true) {
+    if (Object.keys(this.ability).length == 0 && updateDevice) {
+      this.querySystemAbility(updateDevice);
+    }
+
+    return ability in this.ability;
+  }
+
+  /**
+   * @typedef QuerySystemAbilityResponse
+   */
+  /**
+   * 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<QuerySystemAbilityResponse>}
+   */
   async querySystemAbility(updateDevice = true) {
     const message = new QuerySystemAbilityMessage();
 
@@ -180,11 +280,22 @@ export class Device {
 
     const { ability } = payload;
     if (updateDevice) {
+      this.ability = ability;
     }
 
     return ability;
   }
 
+  /**
+   * @typedef QuerySystemTimeResponse
+   * @property {number} timestamp
+   * @property {string} timezone
+   */
+  /**
+   * 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<QuerySystemTimeResponse>}
+   */
   async querySystemTime(updateDevice = true) {
     const message = new QuerySystemTimeMessage();
 
@@ -200,6 +311,14 @@ export class Device {
     return time;
   }
 
+  /**
+   * 
+   * @param {object} [opts]
+   * @param {number} [opts.timestamp]
+   * @param {string} [opts.timezone]
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<boolean>}
+  */
   async configureSystemTime({ timestamp, timezone } = {}, updateDevice = true) {
     const message = new ConfigureSystemTimeMessage({ timestamp, timezone });
 
@@ -208,6 +327,14 @@ export class Device {
     return true;
   }
 
+  /**
+   * @typedef QuerySystemGeolocationResponse
+   */
+  /**
+   * 
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<QuerySystemGeolocationResponse>}
+   */
   async querySystemGeolocation(updateDevice = true) {
     const message = new QuerySystemTimeMessage();
 
@@ -223,6 +350,12 @@ export class Device {
     return position;
   }
 
+  /**
+   * @param {object} [opts]
+   * @param {} [opts.position]
+   * @param {boolean} [updateDevice] 
+   * @returns {Promise<boolean>}
+   */
   async configureSystemGeolocation({ position } = {}, updateDevice = true) {
     const message = new ConfigureSystemPositionMessage({ position });
 
@@ -231,6 +364,10 @@ export class Device {
     return true;
   }
 
+  /**
+   * 
+   * @returns {Promise<WifiAccessPoint[]>}
+   */
   async queryNearbyWifi() {
     const message = new QueryNearbyWifiMessage();
 
@@ -245,11 +382,9 @@ export class Device {
   }
 
   /**
-   * @typedef ConfigureMQTTBrokersParameters
-   * @property {string[]} mqtt
-   *
-   * @param {ConfigureMQTTBrokersParameters}
-   * @returns {Bsoolean}
+   * @param { object } [opts]
+   * @param { string[] } [opts.mqtt]
+   * @returns { Promise<boolean> }
    */
   async configureMQTTBrokers({ mqtt = [] } = {}) {
     const message = new ConfigureMQTTMessage({
@@ -266,17 +401,13 @@ export class Device {
   }
 
   /**
-   * @typedef ConfigureWifiParameters
-   * @property {WifiAccessPoint} wifiAccessPoint
-   *
-   * @param {ConfigureWifiParameters}
-   * @returns {Boolean}
+   * @param {object} opts
+   * @param {WifiAccessPoint[]} opts.wifiAccessPoint
+   * @returns { Promise<boolean> }
    */
   async configureWifi({ wifiAccessPoint }) {
-    const abilities = await this.querySystemAbility();
-
     let message;
-    if (Namespace.CONFIG_WIFIX in abilities) {
+    if (await this.hasSystemAbility(Namespace.CONFIG_WIFIX)) {
       const hardware = await this.querySystemHardware();
       message = new ConfigureWifiXMessage({
         wifiAccessPoint,
