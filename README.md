@@ -2,7 +2,7 @@
 
 [![Node.js Package](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml/badge.svg)](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml)
 
-Tools to help configure the Meross devices for purpose of utilising our <a href="https://github.com/bytespider/Meross/wiki/MQTT">own MQTT servers</a>.
+Tools to help configure the Meross devices to use private MQTT servers.
 
 ## Setup
 
