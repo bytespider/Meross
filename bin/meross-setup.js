@@ -2,7 +2,7 @@
 
 'use strict';
 
-import pkg from '../package.json' assert { type: 'json' };
+import pkg from '../package.json' with { type: 'json' };
 import { program } from 'commander';
 import TerminalKit from 'terminal-kit';
 const { terminal } = TerminalKit;
