@@ -6,11 +6,12 @@ Tools to help configure the Meross devices to use private MQTT servers.
 
 ## Requirements
 
-NodeJS: >= 18.0  
-NPM: >= 9.0
+NodeJS: ^21.0.0, ^20.10.0, ^18.20.0
+NPM: ^10.0.0
 
 ## Setup
 
+TODO:
 [Devices with WIFI pairing]()
 
 [Devices with Bluetooth pairing]()
