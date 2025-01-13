@@ -6,8 +6,7 @@ Tools to help configure the Meross devices for purpose of utilising our <a href=
 
 Before you can use the tool to setup your device you need to put it into paring mode and connect to it's Access Point. It's IP address is known as the `--gateway` parameter and is typically `10.10.10.1`.
 
-Requires `node` >=18  
-For Node.js >=21 you need to prepend commands with `NODE_OPTIONS='--insecure-http-parser'`. This is because the responses from some (if not all) versions of the Meross firmware incorrectly terminate headers with LF instead of CRLF. [CVE-2022-32214](https://nvd.nist.gov/vuln/detail/CVE-2022-32214)
+Requires `node` ^18 ~20 (>=18.0.0 <19.0.0-0 >=20.0.0 <21.0.0-0.).
 
 ## Home Assistant
 
