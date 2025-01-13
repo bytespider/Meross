@@ -18,13 +18,13 @@
   "repository": "https://github.com/bytespider/Meross/tree/master",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.28.0",
+    "axios": "^1.7.9",
     "commander": "^7.2",
     "md5": "^2.2.1",
     "terminal-kit": "^3.0.1",
     "uuid": "^11.0.5"
   },
   "engines": {
-    "node": ">=18.20 ^22.11"
+    "node": "^18.12 || ^20.9.0 || >22.11"
   }
 }
