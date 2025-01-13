@@ -1,6 +1,6 @@
 {
   "name": "meross",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Utility to configure Meross devices for local MQTT",
   "keywords": [
     "smarthome",
@@ -18,14 +18,13 @@
   "repository": "https://github.com/bytespider/Meross/tree/master",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.7.9",
     "commander": "^7.2",
-    "got": "^13.0.0",
     "md5": "^2.2.1",
     "terminal-kit": "^3.0.1",
-    "uuid4": "^2.0.2"
+    "uuid": "^11.0.5"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "^18.12 || ^20.9.0 || >22.11"
   }
 }
