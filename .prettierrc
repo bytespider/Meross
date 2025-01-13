@@ -3,5 +3,7 @@
   "useTabs": false,
   "semi": true,
   "arrowParens": "always",
-  "singleQuote": true
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 80
 }
