@@ -1,6 +1,6 @@
 import got from 'got';
 import { randomUUID } from 'node:crypto';
-import { Message } from './message.js';
+import { Message } from './message/message.js';
 import { isIPv4 } from 'node:net';
 import { generateId, generateTimestamp } from './util.js';
 import { ResponseMethod } from './header.js';

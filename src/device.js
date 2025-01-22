@@ -1,17 +1,7 @@
 import { Method, Namespace } from './header.js';
-import {
-  ConfigureMQTTMessage,
-  QuerySystemFirmwareMessage,
-  QuerySystemHardwareMessage,
-  QueryNearbyWifiMessage,
-  QuerySystemAbilityMessage,
-  QuerySystemInformationMessage,
-  QuerySystemTimeMessage,
-  ConfigureSystemTimeMessage,
-  ConfigureWifiXMessage,
-  ConfigureWifiMessage,
-  Message,
-} from './message.js';
+
+import { Message } from './message/message.js';
+import * as Messages from './message/mod.js';
 import { Transport } from './transport.js';
 import { WifiAccessPoint } from './wifi.js';
 
@@ -155,7 +145,7 @@ export class Device {
    * @returns {Promise<QuerySystemInformationResponse>}
    */
   async querySystemInformation(updateDevice = true) {
-    const message = new QuerySystemInformationMessage();
+    const message = new Messages.QuerySystemInformationMessage();
     message.sign(this.credentials.key);
 
     const { payload } = await this.#transport.send({
@@ -197,7 +187,7 @@ export class Device {
    * @returns {Promise<QuerySystemFirmwareResponse>}
    */
   async querySystemFirmware(updateDevice = true) {
-    const message = new QuerySystemFirmwareMessage();
+    const message = new Messages.QuerySystemFirmwareMessage();
 
     const { payload } = await this.#transport.send({
       message,
@@ -229,7 +219,7 @@ export class Device {
    * @returns {Promise<QuerySystemHardwareResponse>}
    */
   async querySystemHardware(updateDevice = true) {
-    const message = new QuerySystemHardwareMessage();
+    const message = new Messages.QuerySystemHardwareMessage();
 
     const { payload } = await this.#transport.send({
       message,
@@ -271,7 +261,7 @@ export class Device {
    * @returns {Promise<QuerySystemAbilityResponse>}
    */
   async querySystemAbility(updateDevice = true) {
-    const message = new QuerySystemAbilityMessage();
+    const message = new Messages.QuerySystemAbilityMessage();
 
     const { payload } = await this.#transport.send({
       message,
@@ -297,7 +287,7 @@ export class Device {
    * @returns {Promise<QuerySystemTimeResponse>}
    */
   async querySystemTime(updateDevice = true) {
-    const message = new QuerySystemTimeMessage();
+    const message = new Messages.QuerySystemTimeMessage();
 
     const { payload } = await this.#transport.send({
       message,
@@ -320,7 +310,7 @@ export class Device {
    * @returns {Promise<boolean>}
   */
   async configureSystemTime({ timestamp, timezone } = {}, updateDevice = true) {
-    const message = new ConfigureSystemTimeMessage({ timestamp, timezone });
+    const message = new Messages.ConfigureSystemTimeMessage({ timestamp, timezone });
 
     await this.#transport.send({ message, signatureKey: this.credentials.key });
 
@@ -330,13 +320,13 @@ export class Device {
   /**
    * @typedef QuerySystemGeolocationResponse
    */
+
   /**
-   * 
    * @param {boolean} [updateDevice] 
    * @returns {Promise<QuerySystemGeolocationResponse>}
    */
   async querySystemGeolocation(updateDevice = true) {
-    const message = new QuerySystemTimeMessage();
+    const message = new Messages.QuerySystemGeolocationMessage();
 
     const { payload } = await this.#transport.send({
       message,
@@ -357,7 +347,7 @@ export class Device {
    * @returns {Promise<boolean>}
    */
   async configureSystemGeolocation({ position } = {}, updateDevice = true) {
-    const message = new ConfigureSystemPositionMessage({ position });
+    const message = new Messages.ConfigureSystemGeolocationMessage({ position });
 
     await this.#transport.send({ message, signatureKey: this.credentials.key });
 
@@ -369,7 +359,7 @@ export class Device {
    * @returns {Promise<WifiAccessPoint[]>}
    */
   async queryNearbyWifi() {
-    const message = new QueryNearbyWifiMessage();
+    const message = new Messages.QueryNearbyWifiMessage();
 
     const { payload } = await this.#transport.send({
       message,
@@ -387,7 +377,7 @@ export class Device {
    * @returns { Promise<boolean> }
    */
   async configureMQTTBrokers({ mqtt = [] } = {}) {
-    const message = new ConfigureMQTTMessage({
+    const message = new Messages.ConfigureMQTTMessage({
       mqtt,
       credentials: this.credentials,
     });
@@ -409,12 +399,12 @@ export class Device {
     let message;
     if (await this.hasSystemAbility(Namespace.CONFIG_WIFIX)) {
       const hardware = await this.querySystemHardware();
-      message = new ConfigureWifiXMessage({
+      message = new Messages.ConfigureWifiXMessage({
         wifiAccessPoint,
         hardware,
       });
     } else {
-      message = new ConfigureWifiMessage({ wifiAccessPoint });
+      message = new Messages.ConfigureWifiMessage({ wifiAccessPoint });
     }
 
     await this.#transport.send({
