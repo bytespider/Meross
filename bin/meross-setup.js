@@ -128,5 +128,5 @@ try {
     }
   }
 } catch (error) {
-  terminal.red(error.message);
+  terminal.red(`${error.message}\n`);
 }
