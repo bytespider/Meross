@@ -9,7 +9,7 @@ const { terminal } = TerminalKit;
 
 import { printDeviceTable, printWifiListTable, progressFunctionWithMessage } from '../src/cli.js';
 import { Device } from '../src/device.js';
-import { HTTPTransport } from '../src/transport.js';
+import { HTTPTransport } from '../src/transport/http.js';
 
 program
   .version(pkg.version)

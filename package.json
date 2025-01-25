@@ -25,9 +25,11 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^7.2",
-    "got": "^13.0.0",
+    "is-interactive": "^2.0.0",
+    "ky": "^1.7.4",
+    "rm": "^0.1.8",
     "terminal-kit": "^3.0.1",
-    "winston": "^3.11.0"
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/node": "^18",

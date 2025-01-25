@@ -7,6 +7,7 @@ export { QuerySystemGeolocationMessage } from './querySystemGeolocation.js';
 export { QuerySystemHardwareMessage } from './querySystemHardware.js';
 export { QuerySystemInformationMessage } from './querySystemInformation.js';
 export { QuerySystemTimeMessage } from './querySystemTime.js';
+export { QueryDeviceInformationMessage } from './queryDeviceInformation.js';
 
 export { ConfigureMQTTMessage } from './configureMQTT.js';
 export { ConfigureSystemGeolocationMessage } from './configureSystemGeolocation.js';

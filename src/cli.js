@@ -1,7 +1,31 @@
 import TerminalKit from 'terminal-kit';
+import { program } from 'commander';
 import { base64, computeDevicePassword } from './util.js';
 
 const { terminal } = TerminalKit;
+
+export const collection = (value, store = []) => {
+  store.push(value);
+  return store;
+};
+
+export const numberInRange = (min, max) => (value) => {
+  if (value < min || value > max) {
+    throw new program.InvalidOptionArgumentError(
+      `Value is out of range (${min}-${max})`
+    );
+  }
+  return parseInt(value);
+};
+
+export const parseIntWithValidation = (value) => {
+  const i = parseInt(value);
+  if (isNaN(i)) {
+    throw new program.InvalidOptionArgumentError(`Value should be an integer`);
+  }
+
+  return i;
+};
 
 const tableOptions = {
   hasBorder: true,

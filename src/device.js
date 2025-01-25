@@ -2,7 +2,7 @@ import { Method, Namespace } from './header.js';
 
 import { Message } from './message/message.js';
 import * as Messages from './message/mod.js';
-import { Transport } from './transport.js';
+import { Transport } from './transport/transport.js';
 import { WifiAccessPoint } from './wifi.js';
 
 /**
@@ -20,12 +20,14 @@ const CredentialDefaults = {
 /**
  * @typedef DeviceFirmware
  * @property {string} version
+ * @property {string} homekitVersion
  * @property {number} compileTime
  */
 
 /** @type {DeviceFirmware} */
 const FirmwareDefaults = {
   version: '0.0.0',
+  homekitVersion: null,
   compileTime: new Date().toString(),
 };
 
@@ -43,15 +45,47 @@ const HardwareDefaults = {
 
 export class Device {
   /**
-   * @property {Transport} transport
+   * @type {Transport}
    */
   #transport;
 
+  /**
+   * @type {string}
+   */
   model;
+
+  /**
+   * @type {DeviceHardware}
+   */
   hardware;
+
+  /**
+   * @type {DeviceFirmware}
+   */
   firmware;
+
+  /**
+   * @type {DeviceCredentials}
+   */
   credentials;
 
+  /**
+   * @type {object}
+   * @property {object} homekit
+   * @property {string} homekit.model
+   * @property {string} homekit.sn
+   * @property {number} homekit.category
+   * @property {string} homekit.setupId
+   * @property {string} homekit.setupCode
+   * @property {string} homekit.uuid
+   * @property {string} homekit.token
+   * @property {object} matter
+   */
+  connectionInfo;
+
+  /**
+   * @type {object}
+   */
   ability = {};
 
   /**
@@ -62,6 +96,7 @@ export class Device {
    * @property {DeviceHardware} hardware
    * @property {DeviceCredentials} credentials
    */
+
   /**
    * 
    * @param {DeviceOptions}
@@ -88,6 +123,13 @@ export class Device {
     if (credentials) {
       this.credentials = credentials;
     }
+  }
+
+  get isHomekitSupported() {
+    if (this.firmware) {
+      return !!this.firmware?.homekitVersion;
+    }
+    return null;
   }
 
   /**
@@ -163,6 +205,7 @@ export class Device {
       this.model = hardware?.type;
       this.firmware = {
         version: firmware?.version,
+        homekitVersion: firmware?.homekitVersion,
         compileTime: firmware?.compileTime
           ? new Date(firmware?.compileTime)
           : undefined,
@@ -179,6 +222,7 @@ export class Device {
   /**
    * @typedef QuerySystemFirmwareResponse
    * @property {string} version
+   * @property {string?} homekitVersion
    * @property {number} compileTime
    */
   /**
@@ -254,6 +298,7 @@ export class Device {
 
   /**
    * @typedef QuerySystemAbilityResponse
+   * @property [string]: string | number | boolean | object | null
    */
   /**
    * 
@@ -406,6 +451,87 @@ export class Device {
     } else {
       message = new Messages.ConfigureWifiMessage({ wifiAccessPoint });
     }
+
+    const { payload } = await this.#transport.send({
+      message,
+      signatureKey: this.credentials.key,
+    });
+
+    return true;
+  }
+
+  /**
+   * @typedef QueryHomekitConfigurationResponse
+   * @property {string} model
+   * @property {string} sn
+   * @property {number} category
+   * @property {string} setupId
+   * @property {string} setupCode
+   * @property {string} uuid
+   * @property {string} token
+   */
+
+  /**
+   * @param {boolean} [updateDevice]
+   * @returns {Promise<QueryHomekitConfigurationResponse>}
+   */
+  async queryHomekitConfiguration(updateDevice = true) {
+    const message = new Messages.QueryDeviceInformationMessage();
+    const { payload } = await this.#transport.send({
+      message,
+      signatureKey: this.credentials.key,
+    });
+
+    if (updateDevice) {
+      this.connectionInfo.homekit = payload.info.homekit;
+    }
+
+    return payload.info.homekit;
+  }
+
+  /**
+   * @typedef QueryMatterConfigurationResponse
+   * @property {string} model
+   * @property {string} sn
+   * @property {number} category
+   * @property {string} setupId
+   * @property {string} setupCode
+   * @property {string} uuid
+   * @property {string} token
+   */
+
+  /**
+   * @param {boolean} [updateDevice]
+   * @returns {Promise<QueryMatterConfigurationResponse>}
+   */
+  async queryMatterConfiguration(updateDevice = true) {
+    const message = new Messages.QueryDeviceInformationMessage();
+    const { payload } = await this.#transport.send({
+      message,
+      signatureKey: this.credentials.key,
+    });
+
+    if (updateDevice) {
+      this.connectionInfo.matter = payload.info.matter;
+    }
+
+    return payload.info.matter;
+  }
+
+  /**
+   * @param {object} opts
+   * @param {string} opts.token
+   * @param {string} opts.uuid
+   * @param {number} opts.category
+   * @returns { Promise<boolean> }
+   */
+  async configureHomekit({ token, uuid, category }) {
+    const message = new Messages.ConfigureHomekitMessage({
+      homekit: { token, uuid, category },
+    });
+
+    console.log(message);
+    process.exit();
 
     await this.#transport.send({
       message,

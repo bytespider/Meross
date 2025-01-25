@@ -7,33 +7,10 @@ import { program } from 'commander';
 import TerminalKit from 'terminal-kit';
 const { terminal } = TerminalKit;
 
-import { HTTPTransport } from '../src/transport.js';
+import { HTTPTransport } from '../src/transport/http.js';
 import { Device } from '../src/device.js';
 import { WifiAccessPoint } from '../src/wifi.js';
-import { progressFunctionWithMessage } from '../src/cli.js';
-
-const collection = (value, store = []) => {
-  store.push(value);
-  return store;
-};
-
-const numberInRange = (min, max) => (value) => {
-  if (value < min || value > max) {
-    throw new program.InvalidOptionArgumentError(
-      `Value is out of range (${min}-${max})`
-    );
-  }
-  return parseInt(value);
-};
-
-const parseIntWithValidation = (value) => {
-  const i = parseInt(value);
-  if (isNaN(i)) {
-    throw new program.InvalidOptionArgumentError(`Value should be an integer`);
-  }
-
-  return i;
-};
+import { progressFunctionWithMessage, parseIntWithValidation, numberInRange, collection } from '../src/cli.js';
 
 program
   .version(pkg.version)
@@ -91,6 +68,9 @@ try {
       key
     }
   });
+
+  const deviceInformation = await device.querySystemInformation();
+  terminal.green(`Device found: ${deviceInformation.deviceName} (${deviceInformation.hardwareVersion})\n`);
 
   const { setTime = false } = options;
   if (setTime) {

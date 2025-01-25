@@ -7,8 +7,6 @@ import { program } from 'commander';
 
 program
   .version(pkg.version)
-
-program
   .command('info [options]', 'get information about compatable Meross smart device')
   .command('setup [options]', 'setup compatable Meross smart device')
 

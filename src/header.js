@@ -41,6 +41,7 @@ export const Namespace = {
   CONTROL_TRIGGER: 'Appliance.Control.Trigger',
   CONTROL_TRIGGERX: 'Appliance.Control.TriggerX',
 
+  CONFIG_INFO: 'Appliance.Config.Info',
   CONFIG_WIFI: 'Appliance.Config.Wifi',
   CONFIG_WIFIX: 'Appliance.Config.WifiX',
   CONFIG_WIFI_LIST: 'Appliance.Config.WifiList',
@@ -105,7 +106,7 @@ export class Header {
    * @type {string}
    * @public
    */
-  from;
+  from = 'http://10.10.10.1/config';
 
   /**
    * @type {string}
@@ -132,20 +133,47 @@ export class Header {
   sign;
 
   /**
+   * @type {string}
+   * @public
+   */
+  triggerSrc = 'CLILocal'
+
+  /**
    * @param {Object} [opts]
-   * @param {string} [opts.from]
-   * @param {string} [opts.messageId]
-   * @param {number} [opts.timestamp]
-   * @param {string} [opts.sign]
    * @param {Method} [opts.method]
    * @param {Namespace} [opts.namespace]
+   * @param {number} [opts.payloadVersion]
+   * @param {number} [opts.timestamp]
+   * @param {string} [opts.from]
+   * @param {string} [opts.messageId]
+   * @param {string} [opts.sign]
+   * @param {string} [opts.triggerSrc]
    */
-  constructor({ from, messageId, timestamp, sign, method, namespace } = {}) {
-    this.from = from;
-    this.messageId = messageId;
-    this.timestamp = timestamp;
-    this.sign = sign;
+  constructor(options = {}) {
+    const {
+      method,
+      namespace,
+      payloadVersion = this.payloadVersion,
+      timestamp,
+      messageId,
+      sign,
+      from = this.from,
+      triggerSrc = this.triggerSrc,
+    } = options;
+
+    // validate method
+    if (!Object.values(Method).includes(method)) {
+      throw new Error(`Invalid method: ${method}`);
+    }
+
+    // assing properties
     this.method = method;
     this.namespace = namespace;
+    this.payloadVersion = payloadVersion;
+    this.timestamp = timestamp;
+    this.messageId = messageId;
+    this.sign = sign;
+    this.from = from;
+    this.triggerSrc = triggerSrc;
   }
 }

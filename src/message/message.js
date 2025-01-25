@@ -10,9 +10,9 @@ export class Message {
   header;
   payload;
 
-  constructor() {
+  constructor(payload = {}) {
     this.header = new Header();
-    this.payload = {};
+    this.payload = payload;
   }
 
   /**
