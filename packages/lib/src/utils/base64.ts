@@ -1,4 +1,7 @@
-export function encode(data: Buffer): string {
+export function encode(data: string | Buffer): string {
+  if (typeof data === 'string') {
+    data = Buffer.from(data, 'utf-8');
+  }
   return data.toString('base64');
 }
 
