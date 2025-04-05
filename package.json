@@ -9,15 +9,13 @@
     "refoss",
     "cli"
   ],
-  "bin": {
-    "meross": "./bin/meross.js"
-  },
   "type": "module",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "test": "exit 0"
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
   "contributors": [],
