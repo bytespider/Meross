@@ -12,15 +12,9 @@ export function computePresharedPrivateKey(
   macAddress: MacAddress
 ): string {
   return base64.encode(
-    Buffer.from(
-      md5(
-        `${uuid.slice(3, 22)}${key.slice(1, 9)}${macAddress}${key.slice(
-          10,
-          28
-        )}`,
-        'hex'
-      ),
-      'utf-8'
+    md5(
+      `${uuid.slice(3, 22)}${key.slice(1, 9)}${macAddress}${key.slice(10, 28)}`,
+      'hex'
     )
   );
 }
