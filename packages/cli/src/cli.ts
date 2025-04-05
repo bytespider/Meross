@@ -65,11 +65,11 @@ export async function progressFunctionWithMessage<T>(
     animation: 'dotSpinner',
 =======
  * Draws a spinner and a message that is updated on success or failire
- * @param {Function} callback 
- * @param {string} message 
- * @returns 
  */
-export async function progressFunctionWithMessage(callback, message) {
+export async function progressFunctionWithMessage<T>(
+  callback: () => Promise<T>,
+  message: string
+): Promise<T> {
   let spinner = await terminal.spinner({
     animation: 'dotSpinner',
     rightPadding: ' ',
