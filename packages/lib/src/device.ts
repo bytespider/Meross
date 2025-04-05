@@ -22,7 +22,10 @@ import { Transport } from './transport/transport.js';
 import base64 from './utils/base64.js';
 import logger from './utils/logger.js';
 import md5 from './utils/md5.js';
-import protocolFromPort from './utils/protocolFromPort.js';
+import {
+  protocolFromPort,
+  portFromProtocol,
+} from './utils/protocolFromPort.js';
 
 const deviceLogger = logger.child({
   name: 'device',
@@ -247,7 +250,11 @@ export class Device implements Device {
           }
         }
 
-        let { hostname, port } = new URL(broker);
+        let { protocol, hostname, port } = new URL(broker);
+        if (!port) {
+          port = `${portFromProtocol(protocol.replace(':', ''))}`;
+        }
+
         return {
           host: hostname,
           port: Number(port),
