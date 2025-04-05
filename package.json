@@ -9,28 +9,22 @@
     "refoss",
     "cli"
   ],
-  "bin": {
-    "meross": "./bin/meross.js"
-  },
   "type": "module",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "test": "exit 0"
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
   "contributors": [],
   "repository": "https://github.com/bytespider/Meross/tree/master",
   "license": "ISC",
-  "dependencies": {
-    "commander": "^7.2",
-    "got": "^13.0.0",
-    "terminal-kit": "^3.0.1",
-    "winston": "^3.11.0"
-  },
-  "devDependencies": {
-    "@types/node": "^18",
-    "@types/uuid": "^8.3.3"
-  }
+  "workspaces": [
+    "packages/lib",
+    "packages/cli",
+    "packages/*"
+  ],
+  "bin": "packages/cli/bin/meross.js"
 }

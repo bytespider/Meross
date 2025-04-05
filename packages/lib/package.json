@@ -1,0 +1,65 @@
+{
+  "name": "@meross/lib",
+  "version": "2.0.0-beta-3",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./utils": {
+      "default": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./utils/*": {
+      "default": "./dist/utils/*.js",
+      "types": "./dist/utils/*.d.ts"
+    },
+    "./message": {
+      "default": "./dist/message/index.js",
+      "types": "./dist/message/index.d.ts"
+    },
+    "./message/*": {
+      "default": "./dist/message/*.js",
+      "types": "./dist/message/*.d.ts"
+    },
+    "./transport": {
+      "default": "./dist/transport/index.js",
+      "types": "./dist/transport/index.d.ts"
+    },
+    "./transport/*": {
+      "default": "./dist/transport/*.js",
+      "types": "./dist/transport/*.d.ts"
+    },
+    "./encryption": {
+      "default": "./dist/encryption.js",
+      "types": "./dist/encryption.d.ts"
+    },
+    "./messages": {
+      "default": "./dist/message/messages.js",
+      "types": "./dist/message/messages.d.ts"
+    }
+  },
+  "scripts": {
+    "test": "tsx --test",
+    "compile": "tsc -p tsconfig.build.json",
+    "build": "npm run build:clean && npm run compile",
+    "build:clean": "rm -rf ./dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "meross",
+    "automation",
+    "smarthome"
+  ],
+  "author": "Rob Griffiths <rob@bytespider.dev>",
+  "license": "ISC",
+  "description": "Library for interacting with Meross devices",
+  "dependencies": {
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.16",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
