@@ -15,7 +15,7 @@ export class ConfigureWifiMessage extends Message {
     const wifi = filterUndefined(wifiAccessPoint);
 
     if (wifi.ssid) {
-      wifi.ssid = base64.encode(Buffer.from(wifi.ssid));
+      wifi.ssid = base64.encode(wifi.ssid);
     }
     if (wifi.password) {
       wifi.password = base64.encode(wifi.password);
