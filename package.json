@@ -19,7 +19,10 @@
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
   "contributors": [],
-  "repository": "https://github.com/bytespider/Meross/tree/master",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytespider/meross.git"
+  },
   "license": "ISC",
   "workspaces": [
     "packages/lib",

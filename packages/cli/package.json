@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "tsx --test",
-    "build": "tsc --outDir dist",
+    "build": "tsc",
     "prepublishOnly": "npm run build"
   },
   "bin": {
@@ -18,6 +18,10 @@
   ],
   "author": "Rob Griffiths <rob@bytespider.dev>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytespider/meross.git"
+  },
   "dependencies": {
     "@meross/lib": "*",
     "commander": "^13.1.0",

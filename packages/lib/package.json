@@ -41,7 +41,7 @@
   },
   "scripts": {
     "test": "tsx --test",
-    "compile": "tsc -p tsconfig.build.json",
+    "compile": "tsc",
     "build": "npm run build:clean && npm run compile",
     "build:clean": "rm -rf ./dist",
     "prepublishOnly": "npm run build"
@@ -54,6 +54,10 @@
   "author": "Rob Griffiths <rob@bytespider.dev>",
   "license": "ISC",
   "description": "Library for interacting with Meross devices",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytespider/meross.git"
+  },
   "dependencies": {
     "winston": "^3.17.0"
   },
