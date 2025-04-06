@@ -1,10 +1,10 @@
 import TerminalKit from 'terminal-kit';
-import { computeDevicePassword, base64 } from '@meross/lib/utils';
 import { WifiAccessPoint } from '@meross/lib';
+import { TextTableOptions } from 'terminal-kit/Terminal.js';
 
 const { terminal } = TerminalKit;
 
-const tableOptions = {
+const tableOptions: TextTableOptions = {
   hasBorder: true,
   borderChars: 'light',
   contentHasMarkup: true,
@@ -47,7 +47,6 @@ export async function progressFunctionWithMessage<T>(
 ): Promise<T> {
   let spinner = await terminal.spinner({
     animation: 'dotSpinner',
-    rightPadding: ' ',
     attr: { color: 'cyan' },
   });
   terminal(`${message}…`);
