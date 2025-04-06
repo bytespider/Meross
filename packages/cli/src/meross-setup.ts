@@ -55,7 +55,7 @@ const parseIntWithValidation = (value: string) => {
 program
   .version(pkg.version)
   .arguments('[options]')
-  .requiredOption(
+  .option(
     '-a, --ip <ip>',
     'Send command to device with this IP address',
     '10.10.10.1'
