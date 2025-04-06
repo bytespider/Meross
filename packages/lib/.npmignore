@@ -1,0 +1,6 @@
+# Directories
+src/
+
+# Files
+*.log
+*.test.*
