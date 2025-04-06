@@ -138,4 +138,4 @@ We appreciate your feedback and contributions!
 
 ## License
 
-MIT
+ISC
