@@ -1,5 +1,4 @@
-import { DeviceHardware } from '../device.js';
-import { encryptPassword, WifiAccessPoint } from '../wifi.js';
+import { WifiAccessPoint } from '../wifi.js';
 import { ConfigureWifiMessage } from './configureWifiMessage.js';
 import { Namespace } from './header.js';
 import { MessageOptions } from './message.js';

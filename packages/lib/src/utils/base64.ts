@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+
 export function encode(data: string | Buffer): string {
   if (typeof data === 'string') {
     data = Buffer.from(data, 'utf-8');

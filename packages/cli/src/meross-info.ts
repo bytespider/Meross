@@ -39,7 +39,7 @@ program
   .option(
     '-k, --key <shared-key>', 
     'Shared key for generating signatures', 
-    'meross'
+    ''
   )
   .option('--private-key [private-key]', `Private key for ECDH key exchange. If not provided a new one will be generated`)
   .option('--with-wifi', 'List WIFI Access Points near the device')
