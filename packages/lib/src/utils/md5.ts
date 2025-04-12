@@ -1,5 +1,5 @@
-import { Buffer } from 'buffer';
-import { BinaryToTextEncoding, createHash } from 'crypto';
+import { Buffer } from 'node:buffer';
+import { BinaryToTextEncoding, createHash } from 'node:crypto';
 
 export function md5(data: string | Buffer): Buffer;
 export function md5(

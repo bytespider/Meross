@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 
 export function calculatePaddingForBlockSize(data: Buffer, blockSize: number) {
   return blockSize - (data.length % blockSize);

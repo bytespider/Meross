@@ -1,5 +1,7 @@
+import { randomUUID } from 'node:crypto';
+
 export function randomId(): string {
-  return (crypto.randomUUID() as string).replaceAll('-', '');
+  return (randomUUID() as string).replaceAll('-', '');
 }
 
 export default randomId;

@@ -1,4 +1,4 @@
-import type { DeviceHardware, MacAddress, UUID } from './device.js';
+import type { DeviceHardware } from './device.js';
 import Encryption from './encryption.js';
 import md5 from './utils/md5.js';
 
