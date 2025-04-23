@@ -39,7 +39,7 @@ export const bar = (percent: number, width: number): string => {
 };
 
 /**
- * Draws a spinner and a message that is updated on success or failire
+ * Draws a spinner and a message that is updated on success or failure
  */
 export async function progressFunctionWithMessage<T>(
   callback: () => Promise<T>,

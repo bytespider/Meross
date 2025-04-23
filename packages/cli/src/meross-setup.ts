@@ -74,7 +74,7 @@ program
   )
   .option(
     '--wifi-bssid <wifi-bssid>',
-    'WIFI Access Point BSSID (each octet seperated by a colon `:`)'
+    'WIFI Access Point BSSID (each octet separated by a colon `:`)'
   )
   .option(
     '--wifi-channel <wifi-channel>',
