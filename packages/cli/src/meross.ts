@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-'use strict'
+'use strict';
 
-const {version} = require('../package.json')
-const program = require('commander')
+import pkg from '../package.json' with { type: 'json' };
+import { program } from 'commander';
 
 program
-  .version(version)
+  .version(pkg.version)
 
 program
   .command('info [options]', 'get information about compatable Meross smart device')

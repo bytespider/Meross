@@ -6,16 +6,23 @@
     "smarthome",
     "mqtt",
     "meross",
+    "refoss",
     "cli"
   ],
-  "bin": {
-    "meross": "./bin/meross"
+  "type": "module",
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
-    "test": "exit 0"
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
   },
   "author": "Rob Griffiths <rob@bytespider.dev>",
-  "repository": "https://github.com/bytespider/Meross/tree/master",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytespider/meross.git"
+  },
   "license": "ISC",
   "dependencies": {
     "axios": "^1.7.9",
