@@ -1,5 +1,5 @@
-import { Method, Namespace } from './header';
-import { Message, MessageOptions } from './message';
+import { Method, Namespace } from './header.js';
+import { Message, MessageOptions } from './message.js';
 
 export class QueryWifiListMessage extends Message {
   constructor(options: MessageOptions = {}) {

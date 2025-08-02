@@ -1,2 +1,2 @@
-export * from './transport';
-export * from './http';
+export * from './transport.js';
+export * from './http.js';

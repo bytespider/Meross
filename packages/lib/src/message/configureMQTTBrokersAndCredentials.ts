@@ -1,6 +1,6 @@
-import { CloudCredentials } from '../cloudCredentials';
-import { Method, Namespace } from './header';
-import { Message, MessageOptions } from './message';
+import { CloudCredentials } from '../cloudCredentials.js';
+import { Method, Namespace } from './header.js';
+import { Message, MessageOptions } from './message.js';
 
 export type MQTTBroker = {
   host: string;

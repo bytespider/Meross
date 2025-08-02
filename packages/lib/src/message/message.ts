@@ -1,7 +1,5 @@
-import { Header, Method, Namespace } from './header.js';
-import { encryptPassword } from '../wifi.js';
+import { Header } from './header.js';
 import { md5 } from '../utils/md5.js';
-import { generateTimestamp } from '../utils/generateTimestamp.js';
 
 export type MessageOptions = {
   header?: Header;

@@ -1,7 +1,11 @@
 import { createCipheriv, createDecipheriv, createECDH } from 'node:crypto';
 import { Buffer } from 'node:buffer';
-import { calculatePaddingForBlockSize, pad, trimPadding } from './utils/buffer';
-import logger from './utils/logger';
+import {
+  calculatePaddingForBlockSize,
+  pad,
+  trimPadding,
+} from './utils/buffer.js';
+import logger from './utils/logger.js';
 
 const encryptionLogger = logger.child({
   name: 'encryption',

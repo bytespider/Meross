@@ -1,5 +1,5 @@
-import { type MacAddress } from '../device';
-import { md5 } from './md5';
+import { type MacAddress } from '../device.js';
+import { md5 } from './md5.js';
 
 export function computeDevicePassword(
   macAddress: MacAddress,

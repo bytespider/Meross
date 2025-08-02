@@ -1,8 +1,8 @@
-import { filterUndefined } from '../utils';
-import base64 from '../utils/base64';
-import { WifiAccessPoint } from '../wifi';
-import { Method, Namespace } from './header';
-import { Message, MessageOptions } from './message';
+import { filterUndefined } from '../utils/filterUndefined.js';
+import base64 from '../utils/base64.js';
+import { WifiAccessPoint } from '../wifi.js';
+import { Method, Namespace } from './header.js';
+import { Message, MessageOptions } from './message.js';
 
 export class ConfigureWifiMessage extends Message {
   constructor(

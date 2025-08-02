@@ -1,5 +1,5 @@
-import { Method, Namespace } from './header';
-import { Message, type MessageOptions } from './message';
+import { Method, Namespace } from './header.js';
+import { Message, type MessageOptions } from './message.js';
 
 export class QueryDeviceTimeMessage extends Message {
   constructor(options: MessageOptions = {}) {
