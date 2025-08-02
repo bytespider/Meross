@@ -1,0 +1,37 @@
+{
+  "name": "meross",
+  "version": "2.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "tsx --test",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "bin": {
+    "meross": "dist/meross.js"
+  },
+  "keywords": [
+    "meross",
+    "automation",
+    "smarthome"
+  ],
+  "author": "Rob Griffiths <rob@bytespider.dev>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bytespider/meross.git"
+  },
+  "dependencies": {
+    "@meross/lib": "*",
+    "commander": "^13.1.0",
+    "terminal-kit": "^3.1.2"
+  },
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.13.16",
+    "@types/terminal-kit": "^2.5.7",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

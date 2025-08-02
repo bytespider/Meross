@@ -2,28 +2,57 @@
 
 [![Node.js Package](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml/badge.svg)](https://github.com/bytespider/Meross/actions/workflows/npm-ghr-publish.yml)
 
-Tools to help configure the Meross devices for purpose of utilising our <a href="https://github.com/bytespider/Meross/wiki/MQTT">own MQTT servers</a>.
+Tools to help configure the Meross devices to use private MQTT servers.
 
-Before you can use the tool to setup your device you need to put it into paring mode and connect to it's Access Point. It's IP address is known as the `--gateway` parameter and is typically `10.10.10.1`.
+## Requirements
 
-Requires `node` >=18  
-For Node.js >=21 you need to prepend commands with `NODE_OPTIONS='--insecure-http-parser'`. This is because the responses from some (if not all) versions of the Meross firmware incorrectly terminate headers with LF instead of CRLF. [CVE-2022-32214](https://nvd.nist.gov/vuln/detail/CVE-2022-32214)
+NodeJS: ^21.0.0, ^20.10.0, ^18.20.0
+NPM: ^10.0.0
 
-## Home Assistant
+## Setup
 
-It's possible to get these devices to work with Home Assistant (HASSIO).
-<a href="https://github.com/bytespider/Meross/wiki/Home-Assistant-(HASSIO)">Setup Home Assistant MQTT</a>
+TODO:
+[Devices with WIFI pairing]()
 
-Once paired and linked to your broker, you can use the <a href="https://github.com/krahabb/meross_lan">Meross Lan</a> integration to control the devices.
+[Devices with Bluetooth pairing]()
 
 ## Tools
 
 ### Info
 
-`npx meross info [--include-wifi]`
-Gets information from the device you are connected to in setup mode and optionally the WIFI SSID's it can see.
+```
+npx meross-info [options] <options>
+
+Options:
+  -V, --version           output the version number
+  -a, --ip <ip>           Send command to device with this IP address (default: "10.10.10.1")
+  -u, --user <user-id>    Integer id. Used by devices connected to the Meross Cloud
+  -k, --key <shared-key>  Shared key for generating signatures (default: "")
+  --include-wifi          List WIFI Access Points near the device
+  --include-ability       List device ability list
+  --include-time          List device time
+  -v, --verbose           Show debugging messages
+  -h, --help              display help for command
+```
 
 ### Setup
 
-`npx meross setup [options]`
-Setup device you are connected to in setup mode
+```
+npx meross-setup [options] <options>
+
+Options:
+  -V, --version                        output the version number
+  -a, --ip <ip>                        Send command to device with this IP address (default: "10.10.10.1")
+  --wifi-ssid <wifi-ssid>              WIFI Access Point name
+  --wifi-pass <wifi-pass>              WIFI Access Point password
+  --wifi-encryption <wifi-encryption>  WIFI Access Point encryption (this can be found using meross info --include-wifi)
+  --wifi-cipher <wifi-cipher>          WIFI Access Point cipher (this can be found using meross info --include-wifi)
+  --wifi-bssid <wifi-bssid>            WIFI Access Point BSSID (each octet separated by a colon `:`)
+  --wifi-channel <wifi-channel>        WIFI Access Point 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)
+  --mqtt <mqtt-server>                 MQTT server address
+  -u, --user <user-id>                 Integer id. Used by devices connected to the Meross Cloud (default: 0)
+  -k, --key <shared-key>               Shared key for generating signatures (default: "")
+  -t, --set-time                       Configure device time with time and timezone of current host
+  -v, --verbose                        Show debugging messages (default: "")
+  -h, --help                           display help for command
+```

@@ -1,2 +1,6 @@
+# Directories
+certs/
 mosquito/
 teardown/
+
+#Files

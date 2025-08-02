@@ -1,4 +1,6 @@
-# directories
+# Directories
 node_modules/
+dist/
 
-#files
+# Files
+*.log
