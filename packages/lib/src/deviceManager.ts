@@ -57,7 +57,7 @@ export class DeviceManager {
     });
   }
 
-  private shouldEncryptMessage(device: Device, message: any): boolean {
+  private shouldEncryptMessage(device: Device, message: Message): boolean {
     const hasAbility = device.hasAbility(Namespace.ENCRYPT_ECDHE);
     const excludedNamespaces = [
       Namespace.SYSTEM_ALL,
@@ -66,6 +66,6 @@ export class DeviceManager {
       Namespace.ENCRYPT_ECDHE,
       Namespace.ENCRYPT_SUITE,
     ];
-    return hasAbility && !excludedNamespaces.includes(message.namespace);
+    return hasAbility && !excludedNamespaces.includes(message.header.namespace);
   }
 }
