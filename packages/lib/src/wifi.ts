@@ -7,7 +7,7 @@ export enum WifiCipher {
   WEP,
   TKIP,
   AES,
-  TIKPAES,
+  TKIPAES,
 }
 
 export enum WifiEncryption {
@@ -19,7 +19,7 @@ export enum WifiEncryption {
   WPA2,
   WPA2PSK,
   WPA1WPA2,
-  WPA1PSKWPA2PS,
+  WPA1PSKWPA2PSK,
 }
 
 type EncryptPasswordOptions = {
