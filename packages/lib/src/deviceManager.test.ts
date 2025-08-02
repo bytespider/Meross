@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { DeviceManager } from './deviceManager';
-import { DeviceFirmware, DeviceHardware, Device } from './device';
-import { Namespace } from './message/header';
-import { TransportSendOptions, Transport } from './transport/transport';
-import { Message } from './message';
+import { DeviceManager } from './deviceManager.js';
+import { Device } from './device.js';
+import { Namespace } from './message/header.js';
+import { TransportSendOptions, Transport } from './transport/transport.js';
+import { Message } from './message/message.js';
 
 class MockTransport extends Transport {
   id: string = '';

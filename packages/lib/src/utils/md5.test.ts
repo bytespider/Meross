@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { md5 } from './md5';
+import { md5 } from './md5.js';
 
 test('md5 should correctly hash a Buffer to an MD5 hash string', () => {
   const hash = md5('Hello, World!', 'hex');

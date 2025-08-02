@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { randomId } from './randomId';
+import { randomId } from './randomId.js';
 
 test('randomId should generate a string of the correct length', () => {
   const id = randomId();

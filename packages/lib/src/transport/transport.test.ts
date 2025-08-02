@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import * as assert from 'node:assert';
-import { Transport, MessageSendOptions } from './transport';
-import { Message } from '../message/message';
-import { ResponseMethod } from '../message/header';
+import { Transport, MessageSendOptions } from './transport.js';
+import { Message } from '../message/message.js';
+import { ResponseMethod } from '../message/header.js';
 
 class MockTransport extends Transport {
   async _send(options: any) {

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { protocolFromPort } from './protocolFromPort';
+import { protocolFromPort } from './protocolFromPort.js';
 
 test('protocolFromPort should return "http" for port 80', () => {
   assert.strictEqual(protocolFromPort(80), 'http');

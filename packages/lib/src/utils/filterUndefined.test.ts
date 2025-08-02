@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { filterUndefined } from './filterUndefined';
+import { filterUndefined } from './filterUndefined.js';
 
 test('filterUndefined should remove keys with undefined values', () => {
   const input = { a: 1, b: undefined, c: 'test', d: undefined };

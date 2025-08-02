@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { computeDevicePassword } from './computeDevicePassword';
+import { computeDevicePassword } from './computeDevicePassword.js';
 
 test('computeDevicePassword should generate a consistent password for the same inputs', () => {
   const macAddress = '00:1A:2B:3C:4D:5E';

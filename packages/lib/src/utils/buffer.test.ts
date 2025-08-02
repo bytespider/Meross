@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { calculatePaddingForBlockSize, pad, trimPadding } from './buffer';
+import { calculatePaddingForBlockSize, pad, trimPadding } from './buffer.js';
 
 test('calculatePaddingForBlockSize should calculate correct padding', () => {
   const data = Buffer.from('12345');

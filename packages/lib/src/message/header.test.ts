@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { Header, Method, Namespace } from './header';
+import { Header, Method, Namespace } from './header.js';
 
 test('should create a Header instance with valid options', (t) => {
   const options = {
