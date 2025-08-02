@@ -47,7 +47,7 @@ Options:
   --wifi-pass <wifi-pass>              WIFI Access Point password
   --wifi-encryption <wifi-encryption>  WIFI Access Point encryption (this can be found using meross info --include-wifi)
   --wifi-cipher <wifi-cipher>          WIFI Access Point cipher (this can be found using meross info --include-wifi)
-  --wifi-bssid <wifi-bssid>            WIFI Access Point BSSID (each octet seperated by a colon `:`)
+  --wifi-bssid <wifi-bssid>            WIFI Access Point BSSID (each octet separated by a colon `:`)
   --wifi-channel <wifi-channel>        WIFI Access Point 2.5GHz channel number [1-13] (this can be found using meross info --include-wifi)
   --mqtt <mqtt-server>                 MQTT server address
   -u, --user <user-id>                 Integer id. Used by devices connected to the Meross Cloud (default: 0)
