@@ -15,29 +15,14 @@ const tableOptions: TextTableOptions = {
 
 /**
  * Converts a decimal between zero and one to TerminalKit color code
-<<<<<<< HEAD:packages/cli/src/cli.ts
  */
 export const percentToColor = (percent: number): string =>
-=======
- * @param {number} percent 
- * @returns 
- */
-export const percentToColor = (percent) =>
->>>>>>> 5518394 (rename functions and document):src/cli.js
   percent > 0.7 ? '^G' : percent > 0.5 ? '^Y' : percent > 0.3 ? '^y' : '^r';
 
 /**
  * Draws a coloured bar of specified width
-<<<<<<< HEAD:packages/cli/src/cli.ts
  */
 export const bar = (percent: number, width: number): string => {
-=======
- * @param {number} percent 
- * @param {number} width 
- * @returns {string}
- */
-export const bar = (percent, width) => {
->>>>>>> 5518394 (rename functions and document):src/cli.js
   const partials = ['▏', '▎', '▍', '▌', '▋', '▊', '▉'];
   let ticks = percent * width;
   if (ticks < 0) {
@@ -54,7 +39,6 @@ export const bar = (percent, width) => {
 };
 
 /**
-<<<<<<< HEAD:packages/cli/src/cli.ts
  * Draws a spinner and a message that is updated on success or failure
  */
 export async function progressFunctionWithMessage<T>(
@@ -63,17 +47,6 @@ export async function progressFunctionWithMessage<T>(
 ): Promise<T> {
   let spinner = await terminal.spinner({
     animation: 'dotSpinner',
-=======
- * Draws a spinner and a message that is updated on success or failire
- */
-export async function progressFunctionWithMessage<T>(
-  callback: () => Promise<T>,
-  message: string
-): Promise<T> {
-  let spinner = await terminal.spinner({
-    animation: 'dotSpinner',
-    rightPadding: ' ',
->>>>>>> 5518394 (rename functions and document):src/cli.js
     attr: { color: 'cyan' },
   });
   terminal(`${message}…`);
@@ -93,15 +66,6 @@ export async function progressFunctionWithMessage<T>(
   }
 }
 
-<<<<<<< HEAD:packages/cli/src/cli.ts
-=======
-/**
- * 
- * @param {object} deviceInformation 
- * @param {object} deviceAbility 
- * @param {object} deviceTime 
- */
->>>>>>> 5518394 (rename functions and document):src/cli.js
 export async function printDeviceTable(
   deviceInformation: Record<string, any>,
   deviceAbility?: Record<string, any>,
@@ -142,49 +106,22 @@ export async function printDeviceTable(
     rows.push(['Ability', abilityRows.join('\n')]);
   }
 
-<<<<<<< HEAD:packages/cli/src/cli.ts
-=======
-  if (deviceTime) {
-    const date = new Date(deviceTime.timestamp * 1000);
-    const formatter = new Intl.DateTimeFormat(undefined, {
-      dateStyle: 'full',
-      timeStyle: 'long',
-      timeZone: deviceTime.timezone,
-    });
-    rows.push([
-      'System Time',
-      formatter.format(date) +
-      (deviceTime.timezone ? ` (${deviceTime.timezone})` : ''),
-    ]);
-  }
-
->>>>>>> 5518394 (rename functions and document):src/cli.js
   terminal.table(rows, tableOptions);
 }
 
 /**
  * Displays a list of WIFI Access Points
-<<<<<<< HEAD:packages/cli/src/cli.ts
  * @param {object[]} wifiList
  */
 export async function printWifiListTable(
   wifiList: WifiAccessPoint[]
 ): Promise<void> {
-=======
- * @param {object[]} wifiList 
- */
-export async function printWifiListTable(wifiList) {
->>>>>>> 5518394 (rename functions and document):src/cli.js
   const rows = [['WIFI', 'Signal strength']];
 
   for (const { ssid, bssid, channel, encryption, cipher, signal } of wifiList) {
     rows.push([
-<<<<<<< HEAD:packages/cli/src/cli.ts
       `${
         ssid ? ssid : '<hidden>'
-=======
-      `${decodedSsid ? decodedSsid : '<hidden>'
->>>>>>> 5518394 (rename functions and document):src/cli.js
       }\n^B${bssid}^ ^+^YCh:^ ${channel} ^+^YEncryption:^ ${encryption} ^+^YCipher:^ ${cipher}`,
       bar(signal / 100, 20),
     ]);
