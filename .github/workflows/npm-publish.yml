@@ -6,12 +6,30 @@ name: Publish Package to npmjs
 on:
   release:
     types: [published]
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-cli:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm test
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+  build-lib:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/lib
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
