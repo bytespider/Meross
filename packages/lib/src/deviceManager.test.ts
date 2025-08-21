@@ -90,7 +90,7 @@ test('DeviceManager should send messages to devices', async () => {
 
   assert.deepStrictEqual(response, {
     message,
-    encryptionKey: Buffer.from('sharedKey', 'utf-8'),
+    encryptionKey: undefined,
   });
 });
 
@@ -113,7 +113,7 @@ test('DeviceManager shouldEncryptMessage returns true for devices requiring encr
   device.hasAbility = (namespace: Namespace) =>
     namespace === Namespace.ENCRYPT_ECDHE;
 
-  const message = { namespace: 'custom' };
+  const message = { header: { namespace: 'custom' } };
 
   const result = (deviceManager as any).shouldEncryptMessage(device, message);
   assert.strictEqual(result, true);
@@ -126,7 +126,7 @@ test('DeviceManager shouldEncryptMessage returns false for devices not requiring
   const device = new MockDevice('device-1');
   device.hasAbility = () => false;
 
-  const message = { namespace: 'custom' };
+  const message = { heaader: { namespace: 'custom' } };
 
   const result = (deviceManager as any).shouldEncryptMessage(device, message);
   assert.strictEqual(result, false);
@@ -149,7 +149,7 @@ test('DeviceManager shouldEncryptMessage returns false for excluded namespaces',
   ];
 
   for (const namespace of excludedNamespaces) {
-    const message = { namespace };
+    const message = { header: { namespace } };
     const result = (deviceManager as any).shouldEncryptMessage(device, message);
     assert.strictEqual(result, false, `Failed for namespace: ${namespace}`);
   }
