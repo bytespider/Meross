@@ -76,13 +76,13 @@ await device.configureWifi(wifiAP);
 const credentials = new CloudCredentials(123, 'sharedKey');
 await device.configureMQTTBrokersAndCredentials(
   ['mqtt://broker.example.com'],
-  credentials
+  credentials,
 );
 
 // Configure device time
 await device.configureDeviceTime(
   Date.now() / 1000,
-  Intl.DateTimeFormat().resolvedOptions().timeZone
+  Intl.DateTimeFormat().resolvedOptions().timeZone,
 );
 
 // Get nearby WiFi networks
@@ -159,7 +159,7 @@ const keyPair = await createKeyPair(privateKey);
 const precomputedKey = computePresharedPrivateKey(
   deviceId,
   sharedKey,
-  macAddress
+  macAddress,
 );
 
 // Configure device with private key
@@ -262,7 +262,7 @@ async function setupDevice(ip, wifiSettings, mqttServers) {
     const privateKey = computePresharedPrivateKey(
       device.id,
       credentials.key,
-      device.hardware.macAddress
+      device.hardware.macAddress,
     );
 
     await device.setPrivateKey(Buffer.from(privateKey, 'base64'));
@@ -305,7 +305,7 @@ setupDevice(
     cipher: 1,
     channel: 6,
   },
-  ['mqtts://broker.example.com:8883']
+  ['mqtts://broker.example.com:8883'],
 ).catch(console.error);
 ```
 
