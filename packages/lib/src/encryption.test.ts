@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { randomBytes } from 'node:crypto';
 import Encryption from './encryption.js';
 
@@ -12,7 +12,7 @@ test('encrypt should return a buffer of encrypted data', async () => {
   assert.ok(encryptedData);
   assert.notStrictEqual(
     encryptedData.toString('utf-8'),
-    data.toString('utf-8')
+    data.toString('utf-8'),
   );
 });
 
@@ -26,7 +26,7 @@ test('encrypt should use the provided IV', async () => {
   assert.ok(encryptedData);
   assert.notStrictEqual(
     encryptedData.toString('utf-8'),
-    data.toString('utf-8')
+    data.toString('utf-8'),
   );
 });
 
@@ -39,7 +39,7 @@ test('encrypt should use the default IV if none is provided', async () => {
   assert.ok(encryptedData);
   assert.notStrictEqual(
     encryptedData.toString('utf-8'),
-    data.toString('utf-8')
+    data.toString('utf-8'),
   );
 });
 
@@ -51,6 +51,6 @@ test('encrypt should throw an error if the encryption key is invalid', async () 
     async () => {
       await Encryption.encrypt(data, invalidKey);
     },
-    { name: 'RangeError', message: /Invalid key length/ }
+    { name: 'RangeError', message: /Invalid key length/ },
   );
 });

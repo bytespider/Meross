@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { randomId } from './randomId.js';
 
 test('randomId should generate a string of the correct length', () => {

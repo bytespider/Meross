@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { computeDevicePassword } from './computeDevicePassword.js';
 
 test('computeDevicePassword should generate a consistent password for the same inputs', () => {

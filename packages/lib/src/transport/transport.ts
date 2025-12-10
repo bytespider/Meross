@@ -36,7 +36,7 @@ export abstract class Transport {
     this.credentials = options.credentials;
 
     transportLogger.debug(
-      `Transport initialized. Credentials: ${JSON.stringify(this.credentials)}`
+      `Transport initialized. Credentials: ${JSON.stringify(this.credentials)}`,
     );
   }
 

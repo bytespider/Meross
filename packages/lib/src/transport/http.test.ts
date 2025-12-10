@@ -1,29 +1,33 @@
-import { test, before } from 'node:test';
-import assert from 'node:assert';
+import { test } from 'node:test';
+import { strict as assert } from 'node:assert';
+import { Response, RequestInfo, RequestInit, Headers } from 'node-fetch';
 import { HTTPTransport } from './http.js';
 
 test('HTTPTransport should send a message without encryption', async () => {
-  before(() => {
-    global.fetch = async (request) => {
-      const { url, method, headers } = request;
-      const body = await request.text();
+  const fetch = async (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ): Promise<Response> => {
+    const url = input.toString();
+    const method = init?.method || 'GET';
+    const headers = new Headers(init?.headers);
+    const body = init?.body as string;
 
-      assert.strictEqual(url, 'https://example.com/');
-      assert.strictEqual(method, 'POST');
-      assert.strictEqual(
-        headers.get('Content-Type'),
-        'application/json; charset=utf-8'
-      );
-      assert.strictEqual(headers.get('Accept'), 'application/json');
-      assert.strictEqual(body, JSON.stringify({ test: 'message' }));
-      return new Response(JSON.stringify({ success: true }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    };
-  });
+    assert.strictEqual(url, 'https://example.com');
+    assert.strictEqual(method, 'POST');
+    assert.strictEqual(
+      headers.get('Content-Type'),
+      'application/json; charset=utf-8',
+    );
+    assert.strictEqual(headers.get('Accept'), 'application/json');
+    assert.strictEqual(body, JSON.stringify({ test: 'message' }));
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  };
 
-  const transport = new HTTPTransport({ url: 'https://example.com' });
+  const transport = new HTTPTransport({ url: 'https://example.com', fetch });
   const response = await transport['_send']({
     message: {
       test: 'message',
@@ -33,57 +37,51 @@ test('HTTPTransport should send a message without encryption', async () => {
 });
 
 test('HTTPTransport should handle an HTTP error response', async () => {
-  before(() => {
-    global.fetch = async () =>
-      new Response(null, {
-        status: 500,
-        statusText: 'Internal Server Error',
-      });
-  });
+  const fetch = async () =>
+    new Response(null, {
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
 
-  const transport = new HTTPTransport({ url: 'https://example.com' });
+  const transport = new HTTPTransport({ url: 'https://example.com', fetch });
   await assert.rejects(
     async () => {
       await transport['_send']({ message: { test: 'message' } });
     },
-    { message: 'HTTP error! status: 500' }
+    { message: 'HTTP error! status: 500' },
   );
 });
 
 test('HTTPTransport should handle an empty response body', async () => {
-  before(() => {
-    global.fetch = async () =>
-      new Response(null, {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-  });
+  const fetch = async () =>
+    new Response(null, {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-  const transport = new HTTPTransport({ url: 'https://example.com' });
+  const transport = new HTTPTransport({ url: 'https://example.com', fetch });
   await assert.rejects(
     async () => {
       await transport['_send']({ message: { test: 'message' } });
     },
-    { message: 'Empty response body' }
+    { message: 'Empty response body' },
   );
 });
 
 test('HTTPTransport should throw an error for server error messages', async () => {
-  before(() => {
-    global.fetch = async () =>
-      new Response(JSON.stringify({ error: 'Server error' }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-  });
+  const fetch = async () =>
+    new Response(JSON.stringify({ error: 'Server error' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-  const transport = new HTTPTransport({ url: 'https://example.com' });
+  const transport = new HTTPTransport({ url: 'https://example.com', fetch });
   await assert.rejects(
     async () => {
       await transport['_send']({
         message: { test: 'message' },
       });
     },
-    { message: 'Error from server: Server error' }
+    { message: 'Error from server: Server error' },
   );
 });

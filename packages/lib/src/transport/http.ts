@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import { Request } from 'node-fetch';
 import Encryption from '../encryption.js';
 import {
   type TransportOptions,
@@ -9,6 +11,7 @@ import logger from '../utils/logger.js';
 
 export type HTTPTransportOptions = TransportOptions & {
   url: string;
+  fetch?: typeof fetch;
 };
 
 const httpLogger = logger.child({
@@ -17,17 +20,19 @@ const httpLogger = logger.child({
 
 export class HTTPTransport extends Transport {
   private url: string;
+  private fetch: typeof fetch;
 
   constructor(options: HTTPTransportOptions) {
     super(options);
     this.url = options.url;
     this.id = `${this.url}`;
+    this.fetch = options.fetch ?? fetch;
 
     httpLogger.debug(`HTTPTransport initialized with URL: ${this.url}`);
   }
 
   protected async _send(
-    options: TransportSendOptions
+    options: TransportSendOptions,
   ): Promise<Record<string, any>> {
     const { message, encryptionKey } = options;
 
@@ -38,14 +43,14 @@ export class HTTPTransport extends Transport {
 
     let body = JSON.stringify(message);
 
-    let request = new Request(this.url, {
+    let requestInit = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         Accept: 'application/json',
       },
       body,
-    });
+    };
 
     // Encrypt the message if encryptionKey is provided
     if (encryptionKey) {
@@ -54,34 +59,34 @@ export class HTTPTransport extends Transport {
       const encryptedData = await Encryption.encrypt(data, encryptionKey);
       body = await base64.encode(encryptedData);
 
-      request = new Request(this.url, {
+      requestInit = {
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
           Accept: 'text/plain',
         },
         body,
-      });
+      };
     }
 
     requestLogger.http(
-      `${request.method} ${request.url} ${JSON.stringify(
-        request.headers
-      )} ${await request.clone().text()}`,
+      `${requestInit.method} ${this.url} ${JSON.stringify(
+        requestInit.headers,
+      )} ${requestInit.body}`,
       {
-        request,
-      }
+        request: requestInit,
+      },
     );
 
-    const response = await fetch(request);
+    const response = await this.fetch(this.url, requestInit);
 
     requestLogger.http(
       `${response.status} ${response.statusText} ${JSON.stringify(
-        response.headers
+        response.headers,
       )} ${await response.clone().text()}`,
       {
         response,
-      }
+      },
     );
 
     if (!response.ok) {

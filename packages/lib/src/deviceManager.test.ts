@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { DeviceManager } from './deviceManager.js';
 import { Device } from './device.js';
 import { Namespace } from './message/header.js';
@@ -101,7 +101,7 @@ test('DeviceManager should throw an error if device is not found', async () => {
   await assert.rejects(
     async () =>
       deviceManager.sendMessageToDevice('non-existent-device', new Message()),
-    new Error('Device with ID non-existent-device not found')
+    new Error('Device with ID non-existent-device not found'),
   );
 });
 
