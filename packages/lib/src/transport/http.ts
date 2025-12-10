@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import { Request } from 'node-fetch';
 import Encryption from '../encryption.js';
 import {
   type TransportOptions,
@@ -27,7 +29,7 @@ export class HTTPTransport extends Transport {
   }
 
   protected async _send(
-    options: TransportSendOptions
+    options: TransportSendOptions,
   ): Promise<Record<string, any>> {
     const { message, encryptionKey } = options;
 
@@ -66,22 +68,22 @@ export class HTTPTransport extends Transport {
 
     requestLogger.http(
       `${request.method} ${request.url} ${JSON.stringify(
-        request.headers
+        request.headers,
       )} ${await request.clone().text()}`,
       {
         request,
-      }
+      },
     );
 
     const response = await fetch(request);
 
     requestLogger.http(
       `${response.status} ${response.statusText} ${JSON.stringify(
-        response.headers
+        response.headers,
       )} ${await response.clone().text()}`,
       {
         response,
-      }
+      },
     );
 
     if (!response.ok) {
