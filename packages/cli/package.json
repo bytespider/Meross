@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "tsx src/meross.ts",
     "test": "tsx --test",
     "build": "tsc",
     "prepublishOnly": "npm run build"
