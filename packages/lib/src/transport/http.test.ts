@@ -1,5 +1,6 @@
-import { test, before } from 'node:test';
-import assert from 'node:assert';
+import { test } from 'node:test';
+import { strict as assert } from 'node:assert';
+import { Response, RequestInfo, RequestInit, Headers } from 'node-fetch';
 import { HTTPTransport } from './http.js';
 
 test('HTTPTransport should send a message without encryption', async () => {

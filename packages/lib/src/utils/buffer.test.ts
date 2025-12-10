@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { calculatePaddingForBlockSize, pad, trimPadding } from './buffer.js';
 
 test('calculatePaddingForBlockSize should calculate correct padding', () => {

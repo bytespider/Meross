@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { md5 } from './md5.js';
 
 test('md5 should correctly hash a Buffer to an MD5 hash string', () => {
@@ -35,7 +35,7 @@ test('md5 should return a Buffer when no encoding is provided', () => {
   assert.ok(Buffer.isBuffer(result));
   assert.strictEqual(
     result.toString('hex'),
-    '6e946a024f48e761768914ef6437d1eb'
+    '6e946a024f48e761768914ef6437d1eb',
   );
 });
 

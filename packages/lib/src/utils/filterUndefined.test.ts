@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { filterUndefined } from './filterUndefined.js';
 
 test('filterUndefined should remove keys with undefined values', () => {

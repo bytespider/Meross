@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { Header, Method, Namespace } from './header.js';
 
 test('should create a Header instance with valid options', (t) => {
