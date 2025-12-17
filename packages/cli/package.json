@@ -7,7 +7,8 @@
     "dev": "tsx src/meross.ts",
     "test": "tsx --test",
     "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prebuild": "npm run build --workspace=@meross/lib"
   },
   "bin": {
     "meross": "dist/meross.js"
