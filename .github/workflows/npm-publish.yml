@@ -33,7 +33,6 @@ jobs:
 
   build-cli:
     runs-on: ubuntu-latest
-    needs: build-lib
     defaults:
       run:
         working-directory: packages/cli
