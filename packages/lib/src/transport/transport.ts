@@ -3,6 +3,7 @@ import { ResponseMethodLookup } from '../message/header.js';
 import { generateTimestamp, randomId } from '../utils/index.js';
 import { CloudCredentials } from '../cloudCredentials.js';
 import logger from '../utils/logger.js';
+import { MessageResponse } from '../message/response.js';
 
 const transportLogger = logger.child({
   name: 'transport',
@@ -40,7 +41,7 @@ export abstract class Transport {
     );
   }
 
-  async send(options: MessageSendOptions) {
+  async send(options: MessageSendOptions): Promise<MessageResponse> {
     const { message, encryptionKey } = options;
 
     if (!message) {
@@ -59,7 +60,7 @@ export abstract class Transport {
 
     logger.debug(`Signing message ${message.header.messageId}`);
 
-    message.sign(this.credentials?.key);
+    await message.sign(this.credentials?.key);
 
     const response = await this._send({
       message,
@@ -75,5 +76,5 @@ export abstract class Transport {
     return response;
   }
 
-  protected abstract _send(options: TransportSendOptions): Promise<any>;
+  protected abstract _send(options: TransportSendOptions): Promise<MessageResponse>;
 }

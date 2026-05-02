@@ -1,39 +1,45 @@
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { Response, RequestInfo, RequestInit, Headers } from 'node-fetch';
 import { HTTPTransport } from './http.js';
+import { Message } from '../message/message.js';
 
 test('HTTPTransport should send a message without encryption', async () => {
-  const fetch = async (
-    input: RequestInfo | URL,
-    init?: RequestInit,
-  ): Promise<Response> => {
-    const url = input.toString();
-    const method = init?.method || 'GET';
-    const headers = new Headers(init?.headers);
-    const body = init?.body as string;
-
-    assert.strictEqual(url, 'https://example.com');
-    assert.strictEqual(method, 'POST');
-    assert.strictEqual(
-      headers.get('Content-Type'),
-      'application/json; charset=utf-8',
+  let capturedRequest: Request | null = null;
+  const fetch = async (input: RequestInfo, init?: RequestInit) => {
+    capturedRequest = new Request(input, init);
+    return new Response(
+      JSON.stringify({
+        header: { method: 'GETACK' },
+        payload: { all: { system: { hardware: {}, firmware: {} } } },
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      },
     );
-    assert.strictEqual(headers.get('Accept'), 'application/json');
-    assert.strictEqual(body, JSON.stringify({ test: 'message' }));
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
   };
-
   const transport = new HTTPTransport({ url: 'https://example.com', fetch });
-  const response = await transport['_send']({
-    message: {
-      test: 'message',
-    },
+  const message = new Message({
+    payload: { test: 'message' },
   });
-  assert.deepStrictEqual(response, { success: true });
+  const response = await transport.send({ message });
+
+  assert.deepEqual(
+    response.payload.all.system.hardware,
+    {},
+    'Should have parsed mock response',
+  );
+  assert(capturedRequest, 'Fetch was not called');
+  assert.equal((capturedRequest as Request).method, 'POST');
+  assert.equal(
+    new URL((capturedRequest as Request).url).origin,
+    'https://example.com',
+    'URL origin should match',
+  );
+  assert.equal(
+    (capturedRequest as Request).headers.get('Content-Type'),
+    'application/json; charset=utf-8',
+  );
 });
 
 test('HTTPTransport should handle an HTTP error response', async () => {

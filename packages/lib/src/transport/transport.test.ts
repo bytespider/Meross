@@ -1,5 +1,5 @@
 import { test } from 'node:test';
-import * as assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import { Transport, MessageSendOptions } from './transport.js';
 import { Message } from '../message/message.js';
 import { ResponseMethod } from '../message/header.js';
@@ -99,6 +99,6 @@ test('Transport should return the response if everything is valid', async () => 
   assert.ok(response);
   assert.strictEqual(
     response.header.method,
-    ResponseMethod[message.header.method]
+    ResponseMethod[message.header.method],
   );
 });

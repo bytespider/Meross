@@ -1,5 +1,4 @@
-import fetch from 'node-fetch';
-import { Request } from 'node-fetch';
+import process from 'process';
 import Encryption from '../encryption.js';
 import {
   type TransportOptions,
@@ -8,6 +7,7 @@ import {
 } from './transport.js';
 import base64 from '../utils/base64.js';
 import logger from '../utils/logger.js';
+import { MessageResponse } from '../message/response.js';
 
 export type HTTPTransportOptions = TransportOptions & {
   url: string;
@@ -27,6 +27,13 @@ export class HTTPTransport extends Transport {
     this.url = options.url;
     this.id = `${this.url}`;
     this.fetch = options.fetch ?? fetch;
+
+    if (process.versions.node && parseInt(process.versions.node.split('.')[0]) >= 24) {
+      httpLogger.warn(
+        'Node >=24 no longer supports process.binding("http_parser"). ' +
+        'If Meross device responses fail to parse, provide a custom fetch polyfill.',
+      );
+    }
 
     httpLogger.debug(`HTTPTransport initialized with URL: ${this.url}`);
   }
@@ -78,7 +85,7 @@ export class HTTPTransport extends Transport {
       },
     );
 
-    const response = await this.fetch(this.url, requestInit);
+    const response: Response = await this.fetch(this.url, requestInit);
 
     requestLogger.http(
       `${response.status} ${response.statusText} ${JSON.stringify(
@@ -109,7 +116,7 @@ export class HTTPTransport extends Transport {
       throw new Error('Empty response body');
     }
 
-    const responseMessage = JSON.parse(responseBody);
+    const responseMessage = JSON.parse(responseBody) as MessageResponse;
     if (responseMessage.error) {
       throw new Error(`Error from server: ${responseMessage.error}`);
     }

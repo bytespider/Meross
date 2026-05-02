@@ -18,7 +18,6 @@ type Options = {
   privateKey: string | boolean;
   withWifi: boolean;
   withAbility: boolean;
-  includeTime: boolean;
   quiet: boolean;
 };
 
