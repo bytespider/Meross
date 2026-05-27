@@ -19,7 +19,7 @@ export class Message {
    *
    * @param {string} key
    */
-  async sign(key = '') {
+  sign(key = '') {
     const { messageId, timestamp } = this.header;
     this.header.sign = md5(`${messageId}${key}${timestamp}`, 'hex');
   }
